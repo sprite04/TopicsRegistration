@@ -1,0 +1,122 @@
+﻿@using DOAN.Models
+@model IEnumerable<NGUOIDUNG>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+}
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Dashboard")">Home</a></li>
+            <li class="breadcrumb-item">Sinh vien</li>
+        </ol>
+    </div>
+}
+
+@section script{
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+        $(".DeleteId").prepend("<i class='far fa-trash-alt'></i>");
+
+    </script>
+}
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sinh viên</h3>
+                        <a class="btn btn-success float-right" href="@Url.Action("Create","QLNguoiDung")">
+                            Thêm
+                        </a>
+                    </div>
+                    
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                                        <thead>
+                                            <tr>
+                                                <th>@Html.DisplayNameFor(model => model.Username)</th>
+                                                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                                <th>@Html.DisplayNameFor(model => model.Phone)</th>
+                                                <th>@Html.DisplayNameFor(model => model.CHUYENNGANH1.TenCNganh)</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                if (item.ChucVu == 1)
+                                                {
+                                                    <tr id="row1_@item.IdUser">
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.Username)
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.Name)
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.Phone)
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.CHUYENNGANH1.TenCNganh)
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a class="btn btn-info" href="@Url.Action("Edit","QLNguoiDung",new { id=item.IdUser })">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                </a>
+
+                                                                @Ajax.ActionLink(" ", "Delete", "QLNguoiDung", new { id = item.IdUser }, new AjaxOptions { Confirm = "Bạn có muốn xoá người dùng này?", OnComplete = "$('#row1_" + @item.IdUser + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-danger DeleteId" })
+
+                                                            </div>
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>

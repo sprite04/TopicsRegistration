@@ -1,0 +1,218 @@
+﻿@using DOAN.Models;
+@model DETAI
+
+@{
+    ViewBag.Title = "ChiTiet";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var list = ViewBag.ChuyenNganh as IEnumerable<CHUYENNGANH>;
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
+    var listSVDT = ViewBag.SVDT as IEnumerable<SINHVIEN_DETAI>;
+    var listXVN = ViewBag.XinVaoNhom as IEnumerable<XINVAONHOM>;
+}
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Dashboard")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","QLDeTai")">De tai</a></li>
+            <li class="breadcrumb-item">Chi tiet de tai</li>
+        </ol>
+    </div>
+}
+
+@section script{
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+        $(".DeleteId").prepend("<i class='far fa-trash-alt'></i>");
+
+    </script>
+}
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Chi tiết đề tài</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.TenDeTai)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.TenDeTai)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.MucTieu)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.MucTieu)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.YeuCau)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.YeuCau)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.SanPham)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.SanPham)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.ChuThich)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.ChuThich)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.SoLuongSV)
+                                            </th>
+                                            <td>
+                                                <span class="badge badge-pill badge-success">@listSVDT.Count(x => x.DeTai == Model.IdDeTai)</span>/
+                                                <span class="badge badge-pill badge-danger">@Model.SoLuongSV</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.DuocDKKhacCN)
+                                            </th>
+                                            <td>
+                                                @if (Model.DuocDKKhacCN.Value == true)
+                                                {
+                                                    <span>Có</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Không</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.ChuyenNganh)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.CHUYENNGANH1.TenCNganh)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.CAUHINH1.LOAIDETAI.TenLoai)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.CAUHINH1.LOAIDETAI.TenLoai)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.TrangThai)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.TRANGTHAI1.TenTT)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.CAUHINH1.NIENKHOA1.TenNK)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.CAUHINH1.NIENKHOA1.NamBD)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.TruongNhom)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.NGUOIDUNG1.Name)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.GVHuongDan)
+                                            </th>
+                                            <td>
+                                                @Html.DisplayFor(model => model.NGUOIDUNG.Name)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <span>Đăng ký</span>
+                                            </th>
+                                            <td>
+                                                @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DeTai == Model.IdDeTai && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh))
+                                                {
+                                                    <div class="btn-group btn-group-sm">
+                                                        @if (Model.TruongNhom == null)
+                                                        {
+                                                            <a class="btn btn-success" href="@Url.Action("DangKyDeTai","QLDeTai", new { id=Model.IdDeTai,strURL=Request.Url.ToString()})">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </a>
+                                                        }
+                                                        else if (listXVN.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listXVN.Count(x => x.DeTai == Model.IdDeTai && x.NguoiGui == user.IdUser) == 0)
+                                                        {
+                                                            <a class="btn btn-danger" href="@Url.Action("XinVaoNhom","QLDeTai",new { id=Model.IdDeTai,strURL=Request.Url.ToString()})">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>

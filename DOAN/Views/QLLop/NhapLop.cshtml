@@ -1,0 +1,196 @@
+﻿@using DOAN.Models
+@model IEnumerable<NGUOIDUNG>
+
+@{
+    ViewBag.Title = "NhapLop";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var lstChuyenNganh = ViewBag.ChuyenNganh as IEnumerable<CHUYENNGANH>;
+    var Lop = ViewBag.Lop as LOP;
+}
+
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Dashboard")">Home</a></li>
+            <li class="breadcrumb-item active"><a href="@Url.Action("Index","QLLop")">Lop</a></li>
+            <li class="breadcrumb-item active">Them sinh vien</li>
+        </ol>
+    </div>
+}
+
+
+@section script{
+    <script>
+
+
+        $(".DeleteId").prepend("<i class='far fa-trash-alt'></i>");
+
+        $("#btnAdd").click(function () {
+            var id_cuoi = $(".ChiTietLop").find("tr:last-child").attr("data-id");
+            i = parseInt(id_cuoi) + 1;
+
+            var noidung = $(".trAppend").html();
+            //var nd = "<tr><td>kkkkkk</td><td><input/></td><td><input/></td><td><div class=\"btn-group btn-group-sm\"><a class=\"btn btn-info\" href=\"#\"><i class=\"fa fa-minus\"></i></a></div></td></tr>"
+            var trnoidung = "<tr class=\"trAppended\" data-id=\"" + i + "\">" + noidung + "</tr>";
+            $(".ChiTietLop").append(trnoidung);
+            LoadId();
+        });
+
+        function LoadId() {
+            $(".trAppended").each(function () {
+                var id = $(this).attr("data-id");
+                var ChuyenNganh = "[" + id + "].ChuyenNganh";
+                var Name = "[" + id + "].Name";
+                var Username = "[" + id + "].Username";
+                var Diem = "[" + id + "].Diem";
+                var TongTC = "[" + id + "].TongTC";
+                $(this).find(".ddlChuyenNganh").prop("name", ChuyenNganh);
+                $(this).find(".iTen").prop("name", Name);
+                $(this).find(".iUsername").prop("name", Username);
+                $(this).find(".iDiem").prop("name", Diem);
+                $(this).find(".iTinChi").prop("name", TongTC);
+            })
+        };
+
+        $("body").delegate(".btnXoa", "click", function () {
+            $(this).closest(".trAppended").remove();
+
+        });
+
+        $("#btnNhapLop").click(function () {
+
+            if (kiemtra() == false) {
+                return false;
+            }
+        });
+
+        function kiemtra() {
+            var result = true;
+            $(".iDiem").each(function () {
+                var giatri = $(this).val();
+                if (isNaN(giatri) == true) {
+                    alert("Điểm có giá trị không hợp lệ.");
+                    result= false;
+                }
+            });
+            $(".iTinChi").each(function () {
+                var giatri = $(this).val();
+                if (isNaN(giatri) == true) {
+                    alert("Tổng số tín chỉ có giá trị không hợp lệ.");
+                    result = false;
+                }
+            });
+            return result;
+        }
+
+    </script>
+}
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Nhập danh sách sinh viên</h3>
+                        <!-- Button trigger modal -->
+                    </div>
+                    @using (Html.BeginForm("NhapLop", "QLLop", new { Lop = Lop.IdLop }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="card-body">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.Label("Lớp", htmlAttributes: new { @for = "inputBD" })
+                                        <input value=@Lop.TenLop class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6"></div>
+                                    <div class="col-sm-12 col-md-6"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table id="example2" class="table table-bordered table-hover dataTable dtr-inline" role="grid" aria-describedby="example2_info">
+                                            <thead>
+                                                <tr data-id="-1">
+                                                    <th style="width:250px">Họ tên</th>
+                                                    <th style="width:100px">MSSV</th>
+                                                    <th>Chuyên ngành</th>
+                                                    <th style="width:70px">Điểm</th>
+                                                    <th style="width:70px">Số tín chỉ</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="ChiTietLop">
+
+                                                <tr id="row" class="trAppend" style="display:none" data-id="-1">
+                                                    <td>
+                                                        <input class="iTen" style="width:250px"/>
+                                                    </td>
+                                                    <td>
+                                                        <input class="iUsername" style="width:100px"/>
+                                                    </td>
+                                                    <td>
+                                                        <select class="ddlChuyenNganh form-control" name="">
+                                                            @foreach (var item in lstChuyenNganh)
+                                                            {
+                                                                <option value="@item.IdCNganh">@item.TenCNganh</option>
+                                                            }
+                                                        </select>
+
+                                                    </td>
+                                                    <td>
+                                                        <input class="iDiem" value="0" style="width:70px"/>
+                                                    </td>
+                                                    <td>
+                                                        <input class="iTinChi" value="0" style="width:70px" />
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btnXoa" style="font-size: 9px;padding: 7px 10px">
+                                                            <i class="fa fa-minus"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-success float-left" style="font-size:10px; padding:8px 11px" id="btnAdd"><i class="fa fa-plus"></i></button>
+                            <button type="submit" class="btn btn-primary float-right" id="btnNhapLop">Lưu</button>
+                        </div>
+                    }
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>
+

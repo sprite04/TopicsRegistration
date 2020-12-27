@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WEB", "WEB\WEB.csproj", "{DDB4B23D-FB11-47BA-9933-90AA0A50B83C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DOAN", "DOAN\DOAN.csproj", "{6D77DA39-F2D3-4A1B-AF85-0FC7C25A8E29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDB4B23D-FB11-47BA-9933-90AA0A50B83C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB4B23D-FB11-47BA-9933-90AA0A50B83C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB4B23D-FB11-47BA-9933-90AA0A50B83C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB4B23D-FB11-47BA-9933-90AA0A50B83C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D77DA39-F2D3-4A1B-AF85-0FC7C25A8E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D77DA39-F2D3-4A1B-AF85-0FC7C25A8E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D77DA39-F2D3-4A1B-AF85-0FC7C25A8E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D77DA39-F2D3-4A1B-AF85-0FC7C25A8E29}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2877F6FF-6362-4A27-A27E-4A0E24E2B110}
+	EndGlobalSection
+EndGlobal
