@@ -20,6 +20,7 @@ namespace DOAN.Models
         public int IdDeTai { get; set; }
 
         [StringLength(2000)]
+        [Required]
         public string TenDeTai { get; set; }
 
         public string MucTieu { get; set; }
@@ -64,6 +65,7 @@ namespace DOAN.Models
 
         public bool? IsDuyet { get; set; }
 
+        [Required]
         public int? SoLuongSV { get; set; }
 
         public virtual CAUHINH CAUHINH1 { get; set; }
