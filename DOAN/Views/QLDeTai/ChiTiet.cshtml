@@ -173,30 +173,51 @@
                                                 @Html.DisplayFor(model => model.NGUOIDUNG.Name)
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <th>
-                                                <span>Đăng ký</span>
-                                            </th>
-                                            <td>
-                                                @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DeTai == Model.IdDeTai && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh))
-                                                {
+                                        @if (user.IdUT == 1)
+                                        {
+                                            <tr>
+                                                <th>
+                                                    <span>Đăng ký</span>
+                                                </th>
+                                                <td>
+                                                    @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DeTai == Model.IdDeTai && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh)&& (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDK ?? DateTime.Now) <= 0))
+                                                    {
+                                                        <div class="btn-group btn-group-sm">
+                                                            @if (Model.TruongNhom == null)
+                                                            {
+                                                                <a class="btn btn-success" href="@Url.Action("DangKyDeTai","QLDeTai", new { id=Model.IdDeTai,strURL=Request.Url.ToString()})">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                </a>
+                                                            }
+                                                            else if (listXVN.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listXVN.Count(x => x.DeTai == Model.IdDeTai && x.NguoiGui == user.IdUser) == 0)
+                                                            {
+                                                                <a class="btn btn-danger" href="@Url.Action("XinVaoNhom","QLDeTai",new { id=Model.IdDeTai,strURL=Request.Url.ToString()})">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                        else if((user.IdUT > 3 || (user.IdUT == 3 && user.ChuyenNganh == Model.ChuyenNganh))&&Model.IsDuyet==false && (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDuyet ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDuyet ?? DateTime.Now) <= 0))
+                                        {
+                                            <tr>
+                                                <th>
+                                                    <span>Duyệt đề tài</span>
+                                                </th>
+                                                <td>
                                                     <div class="btn-group btn-group-sm">
-                                                        @if (Model.TruongNhom == null)
-                                                        {
-                                                            <a class="btn btn-success" href="@Url.Action("DangKyDeTai","QLDeTai", new { id=Model.IdDeTai,strURL=Request.Url.ToString()})">
-                                                                <i class="fas fa-pencil-alt"></i>
-                                                            </a>
-                                                        }
-                                                        else if (listXVN.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listXVN.Count(x => x.DeTai == Model.IdDeTai && x.NguoiGui == user.IdUser) == 0)
-                                                        {
-                                                            <a class="btn btn-danger" href="@Url.Action("XinVaoNhom","QLDeTai",new { id=Model.IdDeTai,strURL=Request.Url.ToString()})">
-                                                                <i class="fas fa-pencil-alt"></i>
-                                                            </a>
-                                                        }
+                                                        <a class="btn btn-success" href="@Url.Action("DuyetDeTai", "QLDeTai", new { id = Model.IdDeTai })">
+                                                            Duyệt
+                                                        </a>
+                                                        <a class="btn btn-danger" href="@Url.Action("BoQuaDeTai", "QLDeTai", new { id = Model.IdDeTai })">
+                                                            Bỏ qua
+                                                        </a>
                                                     </div>
-                                                }
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
+                                        }
                                     </table>
                                 </div>
                             </div>

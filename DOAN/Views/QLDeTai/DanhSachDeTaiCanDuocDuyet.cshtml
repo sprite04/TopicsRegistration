@@ -1,0 +1,135 @@
+﻿@using DOAN.Models;
+@model IEnumerable<DETAI>
+@{
+    ViewBag.Title = "DanhSachDeTaiCanDuocDuyet";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var list = ViewBag.ChuyenNganh as IEnumerable<CHUYENNGANH>;
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
+    Session["Link"] = Request.Url.ToString();
+}
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Dashboard")">Trang chu</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("LoaiDeTaiTheoNienKhoa","QLDeTai")">Danh sach loai de tai</a></li>
+            <li class="breadcrumb-item">Danh sach de tai</li>
+        </ol>
+    </div>
+}
+
+@section script{
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+
+    </script>
+}
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+
+                @foreach (var cn in list)
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">@cn.TenCNganh</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                                            <thead>
+                                                <tr>
+                                                    <th>@Html.DisplayNameFor(model => model.TenDeTai)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.GVHuongDan)</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    if (item.ChuyenNganh == cn.IdCNganh)
+                                                    {
+                                                        <tr id="row1_@item.IdDeTai">
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.TenDeTai)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.NGUOIDUNG.Name)
+                                                            </td>
+                                                            <td>
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <a class="btn btn-info" href="@Url.Action("ChiTiet","QLDeTai",new { id=item.IdDeTai})">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                            @if (user != null && user.IdUT > 1 )
+                                                            {
+                                                                <td>
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        @Ajax.ActionLink("Duyệt", "DuyetDeTai", "QLDeTai", new { id = item.IdDeTai}, new AjaxOptions { Confirm = "Bạn có muốn duyệt đề tài này?", OnComplete = "$('#row1_" + @item.IdDeTai + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-success DeleteId" })
+                                                                        @Ajax.ActionLink("Bỏ qua", "BoQuaDeTai", "QLDeTai", new { id = item.IdDeTai }, new AjaxOptions { Confirm = "Bạn có muốn bỏ qua đề tài này?", OnComplete = "$('#row1_" + @item.IdDeTai + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-danger DeleteId" })
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                            @if(user!=null && user.IdUT==5)
+                                                            {   <td>
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        <a class="btn btn-info" href="@Url.Action("SuaDeTai","QLDeTai",new { id=item.IdDeTai})">
+                                                                            <i class="fas fa-pencil-alt"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+
+                }
+            </div>
+
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>
+

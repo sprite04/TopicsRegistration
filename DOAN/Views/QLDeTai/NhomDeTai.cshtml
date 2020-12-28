@@ -1,0 +1,158 @@
+﻿@using DOAN.Models;
+@model IEnumerable<SINHVIEN_DETAI>
+
+@{
+    ViewBag.Title = "NhomDeTai";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var SinhVienDeTai = ViewBag.SinhVienDeTai as IEnumerable<SINHVIEN_DETAI>;
+    bool kq = ViewBag.KQ;
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
+}
+
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Trang chu</a></li>
+            <li class="breadcrumb-item active">Nhom de tai</li>
+        </ol>
+    </div>
+}
+
+@section script{
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+
+    </script>
+}
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (kq == true && user != null)
+                {
+                    foreach (var item in Model.GroupBy(x => x.DETAI1))
+                    {
+                        if (item.Key.SINHVIEN_DETAI.Count(x => x.SinhVien == user.IdUser) > 0)
+                        {
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">@item.Key.TenDeTai</h3>
+                                    <!-- Button trigger modal -->
+                                    <a class="btn btn-info float-right" href="@Url.Action("ChiTiet","QLDeTai",new { id=item.Key.IdDeTai})">
+                                        Chi tiết
+                                    </a>
+
+                                </div>
+
+
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-6"></div>
+                                            <div class="col-sm-12 col-md-6"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <table id="example2" class="table table-bordered table-hover dataTable dtr-inline" role="grid" aria-describedby="example2_info">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Thành viên</span></th>
+                                                            <th><span>MSSV</span></th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int i = 1;
+                                                        }
+                                                        @foreach (var p in item)
+                                                        {
+                                                            <tr id="@Url.Content("row1_"+item.Key.IdDeTai+"_"+p.SinhVien)">
+                                                                <td><span>@i</span></td>
+                                                                @{ i++;}
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => p.NGUOIDUNG.Name)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => p.NGUOIDUNG.Username)
+                                                                </td>
+                                                                <td>
+                                                                    @if (p.NGUOIDUNG.IdUser == user.IdUser)
+                                                                    {
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        <a class="btn btn-success" href="@Url.Action("RoiKhoiNhom", "QLDeTai", new { idDT = item.Key.IdDeTai, idND = p.NGUOIDUNG.IdUser })">
+                                                                            Rời khỏi nhóm
+                                                                        </a>
+                                                                    </div>
+                                                                    }
+                                                                    else if(p.NGUOIDUNG.IdUser!=item.Key.TruongNhom)
+                                                                    {
+                                                                        <div class="btn-group btn-group-sm">
+                                                                            <a class="btn btn-success" href="@Url.Action("RoiKhoiNhom", "QLDeTai", new { idDT = item.Key.IdDeTai, idND = p.NGUOIDUNG.IdUser })">
+                                                                                Xoá khỏi nhóm
+                                                                            </a>
+                                                                        </div>
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        }
+
+                    }
+                }
+                else if(user!=null)
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Thông báo</h3>
+                        </div>
+                        <div class="alert alert-warning ml-1 mr-1 mt-2">Không có nhóm đề tài</div>
+                    </div>
+                }
+
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>

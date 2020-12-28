@@ -33,6 +33,7 @@ namespace DOAN.Controllers
         public ActionResult DangNhap(FormCollection f)
         {
             ViewBag.ThongBao = 0;
+            Session["Link"] = Request.Url.ToString();
             string username = f["username"].ToString();
             string password = Encryptor.MD5Hash(f["password"].ToString());
             var user = db.NGUOIDUNGs.SingleOrDefault(x => x.Username == username && x.Password == password &&x.Block==false);
