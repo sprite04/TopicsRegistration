@@ -2143,6 +2143,7 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Views\QLDeTai\LoaiDeTaiTheoNienKhoaCuaTungGV.cshtml" />
+    <Content Include="Views\QLDeTai\DeTaiSinhVien.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2153,6 +2154,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="assets\excel\" />
+    <Folder Include="assets\FileDoAn\" />
     <Folder Include="assets\hinhnd\" />
   </ItemGroup>
   <ItemGroup>

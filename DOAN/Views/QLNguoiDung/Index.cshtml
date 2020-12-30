@@ -49,7 +49,7 @@
             });
         });
         $(".DeleteId").prepend("<i class='far fa-trash-alt'></i>");
-
+        $('.alert').alert()
     </script>
 }
 
@@ -59,6 +59,43 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+
+                @if (ViewBag.Error == 1)
+                {
+                    <div class="alert alert-warning ">
+                        Vui lòng lựa chọn file excel
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (ViewBag.Error == 2)
+                {
+                    <div class="alert alert-warning">
+                        Quá trình thực hiện thất bại
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (ViewBag.Error == 3)
+                {
+                    <div class="alert alert-warning">
+                        Loại file không chính xác
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (ViewBag.Error == -1)
+                {
+                    <div class="alert alert-success">
+                        Quá trình thực hiện thành công
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Import</h3>
@@ -72,17 +109,15 @@
                                 <div class="col-sm-12">
                                     @using (Html.BeginForm("Import", "QLNguoiDung", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                     {
-                                        @Html.Raw(ViewBag.Error)
-
                                         <div class="form-group">
                                             <label class="col-sm-1 control-label m-0 p-0">Excel File</label>
                                             <div class="col-sm-5 d-inline-block">
                                                 @Html.Label("excelfile", "Choose File", new { @for = "excelfile", @class = "custom-file-label" })
                                                 <input class="custom-file-input" type="file" name="excelfile" id="excelfile" onchange="fileCheck(this);" />
-                                                
+
                                             </div>
                                             <div class="col-sm-5 d-inline-block" style="top:4px">
-                                                    <input class="input-group-text" value="Save" type="submit" id="">
+                                                <input class="input-group-text" value="Save" type="submit" id="">
                                             </div>
 
                                         </div>

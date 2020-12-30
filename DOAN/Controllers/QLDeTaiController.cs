@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Web;
@@ -34,7 +35,101 @@ namespace DOAN.Controllers
             return View(list);
         }
 
-        
+        public ActionResult NopBai(int id,int loai,HttpPostedFileBase file)
+        {
+            DETAI detai = db.DETAIs.Find(id);
+            if (detai == null)
+                return HttpNotFound();
+            var folder = Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                string path = Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai +"/"+ fileName);
+                if (!System.IO.File.Exists(path))
+                    file.SaveAs(path);
+                if (loai == 1)
+                {
+                    detai.File_powerpoint = fileName;
+                }
+                if(loai==2)
+                {
+                    detai.File_word = fileName;
+                }
+                if(loai==3)
+                {
+                    detai.File_source = fileName;
+                }
+                try
+                {
+                    db.Entry(detai).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return RedirectToAction("DeTaiSinhVien");  
+        }
+
+        public FileResult Download(int id,string fileName)
+        {
+            DETAI detai = db.DETAIs.Find(id);
+            if (detai == null)
+                return null;
+            string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai + "/"), fileName);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        public ActionResult XoaBaiNop(int id, int loai)
+        {
+            DETAI detai = db.DETAIs.Find(id);
+            if (detai == null)
+                return HttpNotFound();
+            var folder = Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai);
+            if (Directory.Exists(folder))
+            {
+                if(loai==1)
+                {
+                    string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/"+ detai.IdDeTai+"/"), detai.File_powerpoint);
+                    if (System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+                    detai.File_powerpoint = null;
+                }
+                if (loai == 2)
+                {
+                    string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai + "/"), detai.File_word);
+                    if (System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+                    detai.File_word = null;
+                }
+                if (loai == 3)
+                {
+                    string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai + "/"), detai.File_source);
+                    if (System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+                    detai.File_source = null;
+                }
+                try
+                {
+                    db.Entry(detai).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return RedirectToAction("DeTaiSinhVien");
+        }
+
         public ActionResult Export(int id)
         {
             int error = 0;
@@ -558,6 +653,18 @@ namespace DOAN.Controllers
             {
                 return Content("<script> alert(\"Bạn không có quyền duyệt đề tài này\")</script>");
             }
+        }
+
+        [Authorize(Roles = "quanlinhom")]
+        public ActionResult DeTaiSinhVien()
+        {
+            NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
+            if (user == null)
+                return HttpNotFound();
+            
+            var list = db.DETAIs.Where(x => DateTime.Compare(DateTime.Now, x.ThoiGianKTBaoVe ?? DateTime.Now) <= 0 && db.SINHVIEN_DETAI.Any(y=>y.DeTai==x.IdDeTai&&y.SinhVien==user.IdUser));
+            ViewBag.KQ = list.Count()>0;
+            return View(list);
         }
     }
 }

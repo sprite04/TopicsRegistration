@@ -1,0 +1,226 @@
+﻿@using DOAN.Models;
+@model IEnumerable<DETAI>
+@{
+    ViewBag.Title = "DeTaiSinhVien";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+    bool kq = ViewBag.KQ;
+}
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Trang chu</a></li>
+            <li class="breadcrumb-item active">Nhom de tai</li>
+        </ol>
+    </div>
+}
+
+@section script{
+    <script>
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+
+    </script>
+}
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (kq == true)
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="card">
+                            <div class="card-header" >
+                                <div class="row" >
+                                    <div class="col-9" >
+                                        <h1 class="card-title text-primary" style="font-size:20px">@item.TenDeTai</h1><br/>
+                                        <span >@Url.Content("Hạn nộp: "+ item.CAUHINH1.ThoiGianSVKetThucNopBC)</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <!-- Button trigger modal -->
+                                        <a class="btn btn-info float-right" href="@Url.Action("ChiTiet","QLDeTai",new { id=item.IdDeTai})">
+                                            Chi tiết
+                                        </a>
+                                    </div>
+
+                                </div>
+                                
+                                
+
+                            </div>
+
+
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6"></div>
+                                        <div class="col-sm-12 col-md-6"></div>
+                                    </div>
+                                    <div class="row">
+                                        @if (item.File_powerpoint == null)
+                                        {
+                                            using (Html.BeginForm("NopBai", "QLDeTai",new {id=item.IdDeTai, loai=1 }, FormMethod.Post, new { @enctype = "multipart/form-data", @style="width:32%", @class = "mr-3 ml-1" }))
+                                            {
+                                                <div class="form-group">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">File PowerPoint</h4></div>
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                @Html.Label("file", "Choose File", new { @for = "file", @class = "custom-file-label", @style = "top:65px; left:20px; right:20px;" })
+                                                                <input class="custom-file-input" type="file" name="file" id="file" onchange="fileCheck(this);" />
+                                                            </div>
+                                                            <input class="btn btn-dark btn-block" value="Gửi" type="submit" id="">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm("XoaBaiNop", "QLDeTai", new {loai=1, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%", @class = "mr-3 ml-1" }))
+                                            {
+                                                <div class="form-group ">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">File PowerPoint</h4></div>
+                                                        <div class="card-body">
+                                                            <div class="card">
+                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, fileName=item.File_powerpoint })">@item.File_powerpoint</a></div>
+                                                            </div>
+                                                            <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            
+                                        }
+                                        @if (item.File_word == null)
+                                        {
+                                            using (Html.BeginForm("NopBai", "QLDeTai", new {loai=2, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%", @class="mr-3" }))
+                                            {
+                                                <div class="form-group ">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">File Word</h4></div>
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                @Html.Label("file", "Choose File", new { @for = "file", @class = "custom-file-label", @style = "top:65px; left:20px; right:20px;" })
+                                                                <input class="custom-file-input" type="file" name="file" id="file" onchange="fileCheck(this);" />
+                                                            </div>
+                                                            <input class="btn btn-dark btn-block" value="Gửi" type="submit" id="">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm("XoaBaiNop", "QLDeTai", new {loai=2, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%", @class = "mr-3" }))
+                                            {
+                                                <div class="form-group ">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">File Word</h4></div>
+                                                        <div class="card-body">
+                                                            <div class="card">
+                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, fileName=item.File_word })">@item.File_word</a></div>
+                                                            </div>
+                                                            <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        @if (item.File_source == null)
+                                        {
+                                            using (Html.BeginForm("NopBai", "QLDeTai", new {loai=3, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%" }))
+                                            {
+                                                <div class="form-group ">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">File Source</h4></div>
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+
+                                                                @Html.Label("file", "Choose File", new { @for = "file", @class = "custom-file-label", @style = "top:65px; left:20px; right:20px;" })
+                                                                <input class="custom-file-input" type="file" name="file" id="file" onchange="fileCheck(this);" />
+                                                            </div>
+                                                            <input class="btn btn-dark btn-block" value="Gửi" type="submit" id="">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm("XoaBaiNop", "QLDeTai", new {loai=3, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%" }))
+                                            {
+                                                <div class="form-group ">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">File Source</h4></div>
+                                                        <div class="card-body">
+                                                            <div class="card">
+                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, fileName=item.File_source })">@item.File_source</a></div>
+                                                            </div>
+                                                            <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    }
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Thông báo</h3>
+                        </div>
+                        <div class="alert alert-warning ml-1 mr-1 mt-2">Không có đề tài</div>
+                    </div>
+                }
+
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>

@@ -17,9 +17,11 @@ namespace DOAN.Controllers
     {
         WEBDbContext db = new WEBDbContext();
         // GET: QLNguoiDung
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult Index(int error=0)
         {
             var list = db.NGUOIDUNGs.Where(x => x.Block == false && x.ChucVu ==1);
+            ViewBag.Error = error;//1:vui lòng lựa chọn file excel, 2 quá trình thực hiện thất bại, 3 loại file không chính xác
             return View(list);
         }
 
@@ -32,10 +34,11 @@ namespace DOAN.Controllers
         [HttpPost]
         public ActionResult Import(HttpPostedFileBase excelfile)
         {
+            int error = 0;
             if(excelfile==null || excelfile.ContentLength==0)
             {
-                ViewBag.Error = "Vui lòng lựa chọn 1 file excel<br>";
-                return RedirectToAction("Index");
+                error = 1;//Vui lòng lựa chọn 1 file excel
+                return RedirectToAction("Index", new { error = error });
             }
             else
             {
@@ -93,12 +96,14 @@ namespace DOAN.Controllers
                             {
                                 db.NGUOIDUNGs.Add(nd);
                                 db.SaveChanges();
+                                
                             }
                             catch (Exception)
                             {
-                                ViewBag.Error = "Quá trình thực hiện thất bại";
-                                return RedirectToAction("Index");
+                                error = 2;//Quá trình thực hiện thất bại
+                                return RedirectToAction("Index",new { error = error });
                             }
+                            error = -1;
                         }
                         else
                         {
@@ -112,6 +117,7 @@ namespace DOAN.Controllers
                             }
                             catch (Exception)
                             {
+                                
                                 kq.NgaySinh = null;
                             }
                             int lop;
@@ -138,17 +144,18 @@ namespace DOAN.Controllers
                             }
                             catch (Exception)
                             {
-                                ViewBag.Error = "Quá trình thực hiện thất bại";
-                                return RedirectToAction("Index");
+                                error = 2;//Quá trình thực hiện thất bại
+                                return RedirectToAction("Index", new { error = error });
                             }
+                            error = -1;
                         }
-                    }    
-                    return RedirectToAction("Index");
+                    }
+                    return RedirectToAction("Index", new { error = error });
                 }
                 else
                 {
-                    ViewBag.Error = "Loại file không chính xác<br>";
-                    return RedirectToAction("Index");
+                    error = 3;//Loại file không chính xác
+                    return RedirectToAction("Index", new { error = error });
                 }    
             }    
         }
