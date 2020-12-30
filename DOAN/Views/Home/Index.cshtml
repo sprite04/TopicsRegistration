@@ -118,14 +118,12 @@
                                         {
                                             @Html.AntiForgeryToken()
 
-                                            <div class="card-body">
                                                 <div class="form-group text-center">
                                                     <label class="col-sm-2 control-label m-0 p-0">Loại đề tài</label>
                                                     <div class="col-sm-5 d-inline-block">
                                                         @Html.DropDownList("ddlCauHinh", ViewBag.items as SelectList, "Chọn loại đề tài", new { @class = "form-control", @onchange = "this.form.submit();" })
                                                     </div>
                                                 </div>
-                                            </div>
 
                                             if (ViewBag.GiaTri != 0)
                                             {

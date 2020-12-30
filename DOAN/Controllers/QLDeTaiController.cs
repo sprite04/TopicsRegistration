@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
 using DOAN.Models;
 using DOAN.ModelView;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace DOAN.Controllers
 {
@@ -30,6 +32,68 @@ namespace DOAN.Controllers
 
             var list = db.DETAIs.Where(x => x.IsDuyet == true && x.CauHinh==cauhinh.IdCauHinh);
             return View(list);
+        }
+
+        
+        public ActionResult Export(int id)
+        {
+            int error = 0;
+            CAUHINH cauhinh = db.CAUHINHs.SingleOrDefault(x => x.IdCauHinh == id);
+            if (cauhinh == null)
+                return HttpNotFound();
+            NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
+            if (user == null)
+                return HttpNotFound();
+            var list = db.DETAIs.Where(x => x.GVHuongDan == user.IdUser && user.IdUT > 1 && x.IsDelete == false && x.CauHinh == cauhinh.IdCauHinh &&x.IsDuyet==true).OrderBy(k => k.ChuyenNganh);
+            try
+            {
+                Excel.Application application = new Excel.Application();
+                Excel.Workbook workbook = application.Workbooks.Add(System.Reflection.Missing.Value);
+                Excel.Worksheet worksheet = workbook.ActiveSheet;
+                worksheet.Cells[1, 1] = "STT";
+                worksheet.Cells[1, 2] = "MSSV";
+                worksheet.Cells[1, 3] = "Họ và tên";
+                worksheet.Cells[1, 4] = "Ngày sinh";
+                worksheet.Cells[1, 5] = "Đề tài";
+                worksheet.Cells[1, 6] = "Điểm";
+                int row = 2;
+                foreach (var detai in list)
+                {
+                    if(detai.SINHVIEN_DETAI.Count()>0)
+                    {
+                        foreach(var sv in db.SINHVIEN_DETAI.Where(x=>x.DeTai==detai.IdDeTai))
+                        {
+                            worksheet.Cells[row, 1] = row - 1;
+                            worksheet.Cells[row, 2] = sv.NGUOIDUNG.Username;
+                            worksheet.Cells[row, 3] = sv.NGUOIDUNG.Name;
+                            string ngaysinh = sv.NGUOIDUNG.NgaySinh.ToString();
+                            if (ngaysinh!="")
+                            {
+
+                                worksheet.Cells[row, 4] = DateTime.Parse(ngaysinh).ToString("dd/MM/yyyy");
+                            }    
+                                 
+
+                            worksheet.Cells[row, 5] = sv.DETAI1.TenDeTai;
+                            worksheet.Cells[row, 6] = sv.Diem;
+                            row++;
+                        }    
+                    }
+                    workbook.SaveAs("D:\\Export_Web\\DSSinhVienTungDeTai_"+user.Name.ToString()+"_"+DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss"));
+                    workbook.Close();
+                    Marshal.ReleaseComObject(workbook);
+                    application.Quit();
+                    Marshal.FinalReleaseComObject(application);
+                    error = -1;
+                    return RedirectToAction("DanhSachDeTaiCuaTungGV", new {id=cauhinh.IdCauHinh, error = error });
+
+                }    
+            }
+            catch (Exception e)
+            {
+                error = 1; //Bao loi ben danh sach de tai cua tung gv
+            }
+            return RedirectToAction("DanhSachDeTaiCuaTungGV", new { id=cauhinh.IdCauHinh, error = error });
         }
 
         public ActionResult LoaiDeTaiTheoNienKhoa()
@@ -130,12 +194,24 @@ namespace DOAN.Controllers
         }
 
         [Authorize(Roles = "*,xemdanhsachdetaicuatunggiangvien")]
-        public ActionResult DanhSachDeTaiCuaTungGV()
+        public ActionResult LoaiDeTaiTheoNienKhoaCuaTungGV()
         {
+            var list = db.CAUHINHs.Where(x => x.Active == true);
+            return View(list);
+        }
+
+        [Authorize(Roles = "*,xemdanhsachdetaicuatunggiangvien")]
+        public ActionResult DanhSachDeTaiCuaTungGV(int id, int error=0)
+        {
+            CAUHINH cauhinh = db.CAUHINHs.SingleOrDefault(x => x.IdCauHinh == id);
+            if (cauhinh == null)
+                return HttpNotFound();
             NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
             if (user == null)
                 return HttpNotFound();
-            var list = db.DETAIs.Where(x => x.GVHuongDan == user.IdUser && user.IdUT>1&&x.IsDelete==false).OrderBy(k=>k.ChuyenNganh);
+            ViewBag.Error = error;
+            ViewBag.CauHinh = cauhinh;
+            var list = db.DETAIs.Where(x => x.GVHuongDan == user.IdUser && user.IdUT>1&&x.IsDelete==false && x.CauHinh==cauhinh.IdCauHinh).OrderBy(k=>k.ChuyenNganh);
             return View(list);
         }
 
@@ -145,7 +221,7 @@ namespace DOAN.Controllers
             
             ViewBag.ChuyenNganh = new SelectList(db.CHUYENNGANHs, "IdCNganh", "TenCNganh");
             List<CauHinh> list = new List<CauHinh>();
-            foreach(var item in db.CAUHINHs.Where(x=>x.Active==true))
+            foreach(var item in db.CAUHINHs.Where(x=>x.Active==true && (DateTime.Compare(DateTime.Now, x.ThoiGianGVBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.ThoiGianGVKetThucDK ?? DateTime.Now) <= 0)))
             {
                 CauHinh ch = new CauHinh();
                 ch.IdCauHinh = item.IdCauHinh;
@@ -177,6 +253,22 @@ namespace DOAN.Controllers
                 detai.DuocDKKhacCN = false;
             else
                 detai.DuocDKKhacCN = true;
+            if(detai.CauHinh==null)
+            {
+                ModelState.AddModelError("", "Chưa lựa chọn cấu hình");
+                ViewBag.ChuyenNganh = new SelectList(db.CHUYENNGANHs, "IdCNganh", "TenCNganh", detai.ChuyenNganh);
+                List<CauHinh> ds = new List<CauHinh>();
+                foreach (var item in db.CAUHINHs.Where(x => x.Active == true && (DateTime.Compare(DateTime.Now, x.ThoiGianGVBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.ThoiGianGVKetThucDK ?? DateTime.Now) <= 0)))
+                {
+                    CauHinh ch = new CauHinh();
+                    ch.IdCauHinh = item.IdCauHinh;
+                    ch.TenCauHinh = item.LOAIDETAI.TenLoai + " | " + item.NIENKHOA1.TenNK + " (" + item.NIENKHOA1.NamBD + "-" + item.NIENKHOA1.NamKT + ") " + " | Học kỳ " + item.HocKy + " (" + item.NamHocBatDauHocKy + "-" + item.NamHocKetThucHocKy + ") ";
+                    ds.Add(ch);
+                }
+                ViewBag.CauHinh = new SelectList(ds, "IdCauHinh", "TenCauHinh");
+                return View(detai);
+
+            }    
             if (ModelState.IsValid)
             {
                 try
@@ -194,7 +286,7 @@ namespace DOAN.Controllers
                 ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin đã nhập.");
             ViewBag.ChuyenNganh = new SelectList(db.CHUYENNGANHs, "IdCNganh", "TenCNganh", detai.ChuyenNganh);
             List<CauHinh> list = new List<CauHinh>();
-            foreach (var item in db.CAUHINHs.Where(x => x.Active == true))
+            foreach (var item in db.CAUHINHs.Where(x => x.Active == true && (DateTime.Compare(DateTime.Now, x.ThoiGianGVBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.ThoiGianGVKetThucDK ?? DateTime.Now) <= 0)))
             {
                 CauHinh ch = new CauHinh();
                 ch.IdCauHinh = item.IdCauHinh;

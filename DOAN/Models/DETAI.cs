@@ -43,7 +43,8 @@ namespace DOAN.Models
 
         public int? TruongNhom { get; set; }
 
-        public int? CauHinh { get; set; }
+     
+        public int ? CauHinh { get; set; }
 
         public bool? IsDelete { get; set; }
 

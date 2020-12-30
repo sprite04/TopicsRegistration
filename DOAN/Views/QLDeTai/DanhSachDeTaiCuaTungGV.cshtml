@@ -5,6 +5,7 @@
     ViewBag.Title = "DanhSachDeTaiCuaTungGV";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
     Session["Link"] = Request.Url.ToString();
+    var cauhinh = ViewBag.CauHinh as CAUHINH;
 }
 
 
@@ -38,7 +39,7 @@
             });
         });
         $(".DeleteId").prepend("<i class='far fa-trash-alt'></i>");
-
+        $('.alert').alert()
     </script>
 }
 
@@ -52,9 +53,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Danh sách đề tài chưa được duyệt</h3>
                         <!-- Button trigger modal -->
-                        <a class="btn btn-success float-right" href="@Url.Action("TaoDeTai","QLDeTai")">
-                            Tạo đề tài
-                        </a>
+
 
                     </div>
 
@@ -125,10 +124,32 @@
                 </div>
                 <!-- /.card -->
 
+                @if (ViewBag.Error == 1)
+                {
+                    <div class="alert alert-warning ">Quá trình thực hiện không thành công
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (ViewBag.Error == -1)
+                {
+                    <div class="alert alert-success">Quá trình thực hiện thành công
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Danh sách đề tài đã được duyệt</h3>
+                        <a class="btn btn-success float-right" href="@Url.Action("Export","QLDeTai",new {id=cauhinh.IdCauHinh })">
+                            Export
+                        </a>
                     </div>
+
+
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -140,7 +161,7 @@
                                                 <th><span>STT</span></th>
                                                 <th>@Html.DisplayNameFor(model => model.TenDeTai)</th>
                                                 <th>@Html.DisplayNameFor(model => model.CAUHINH1.LOAIDETAI.TenLoai)</th>
-                                                <th>@Html.DisplayNameFor(model=>model.CHUYENNGANH1.TenCNganh)</th>
+                                                <th>@Html.DisplayNameFor(model => model.CHUYENNGANH1.TenCNganh)</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -148,7 +169,7 @@
                                             @{ int j = 1;}
                                             @foreach (var item in Model)
                                             {
-                                                if (item.IsDuyet==true)
+                                                if (item.IsDuyet == true)
                                                 {
                                                     <tr id="row2_@item.IdDeTai">
                                                         <td><span>@j</span></td>

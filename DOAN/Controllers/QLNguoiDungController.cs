@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using DOAN.Common;
 using DOAN.Models;
+using Excel=Microsoft.Office.Interop.Excel;
 
 namespace DOAN.Controllers
 {
@@ -26,6 +27,130 @@ namespace DOAN.Controllers
         {
             var list = db.NGUOIDUNGs.Where(x => x.Block == false && x.ChucVu>1);
             return View(list);
+        }
+
+        [HttpPost]
+        public ActionResult Import(HttpPostedFileBase excelfile)
+        {
+            if(excelfile==null || excelfile.ContentLength==0)
+            {
+                ViewBag.Error = "Vui lòng lựa chọn 1 file excel<br>";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                if(excelfile.FileName.EndsWith("xls")||excelfile.FileName.EndsWith("xlsx")||excelfile.FileName.EndsWith("xlsm"))
+                {
+                    string path = Server.MapPath("~/assets/excel/"+excelfile.FileName);
+                    if (!System.IO.File.Exists(path))
+                        excelfile.SaveAs(path);
+
+                    //Doc du lieu tu file excel
+                    Excel.Application application = new Excel.Application();
+                    Excel.Workbook workbook = application.Workbooks.Open(path);
+                    Excel.Worksheet worksheet = workbook.ActiveSheet;
+                    Excel.Range range = worksheet.UsedRange;
+                    for(int row=2;row<=range.Rows.Count;row++)
+                    {
+                        string mssv = ((Excel.Range)range.Cells[row, 1]).Text.Trim();
+                        var kq = db.NGUOIDUNGs.SingleOrDefault(x=>x.Username==mssv);
+                        if(kq==null)
+                        {
+                            bool hople = true;
+                            NGUOIDUNG nd = new NGUOIDUNG();
+                            nd.Username = mssv;
+                            nd.Name = ((Excel.Range)range.Cells[row, 2]).Text.Trim() + " " + ((Excel.Range)range.Cells[row, 3]).Text.Trim();
+                            nd.GioiTinh = int.Parse(((Excel.Range)range.Cells[row, 4]).Text.Trim()) == 0 ? false : true;
+                            try
+                            {
+                                var ngaysinh = DateTime.FromOADate(Convert.ToDouble((range.Cells[row, 5] as Excel.Range).Value2));
+                                nd.NgaySinh = ngaysinh;
+                            }
+                            catch (Exception)
+                            {
+                                nd.NgaySinh = null;
+                            }
+                            int lop;
+                            hople= int.TryParse(((Excel.Range)range.Cells[row, 6]).Text.Trim(),out lop);
+                            if (hople)
+                                nd.Lop = lop;
+                            nd.Phone = ((Excel.Range)range.Cells[row, 7]).Text.Trim();
+                            nd.ChuyenNganh = int.Parse(((Excel.Range)range.Cells[row, 8]).Text.Trim());
+                            float diem;
+                            hople = float.TryParse(((Excel.Range)range.Cells[row, 9]).Text.Trim(), out diem);
+                            if(hople)
+                                nd.Diem = float.Parse(((Excel.Range)range.Cells[row, 9]).Text.Trim());
+                            int tongtc;
+                            hople= int.TryParse(((Excel.Range)range.Cells[row, 10]).Text.Trim(),out tongtc);
+                            if (hople)
+                                nd.TongTC = tongtc;
+                            nd.Block = false;
+                            nd.Password = Encryptor.MD5Hash(mssv);
+                            nd.ChucVu = 1;
+                            nd.IdUT = 1;
+                            nd.RegisterDate = DateTime.Now;
+                            try
+                            {
+                                db.NGUOIDUNGs.Add(nd);
+                                db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                ViewBag.Error = "Quá trình thực hiện thất bại";
+                                return RedirectToAction("Index");
+                            }
+                        }
+                        else
+                        {
+                            bool hople = true;
+                            kq.Name = ((Excel.Range)range.Cells[row, 2]).Text.Trim() + " " + ((Excel.Range)range.Cells[row, 3]).Text.Trim();
+                            kq.GioiTinh = int.Parse(((Excel.Range)range.Cells[row, 4]).Text.Trim()) == 0 ? false : true;
+                            try
+                            {
+                                var ngaysinh = DateTime.FromOADate(Convert.ToDouble((range.Cells[row, 5] as Excel.Range).Value2));
+                                kq.NgaySinh = ngaysinh;
+                            }
+                            catch (Exception)
+                            {
+                                kq.NgaySinh = null;
+                            }
+                            int lop;
+                            hople = int.TryParse(((Excel.Range)range.Cells[row, 6]).Text.Trim(), out lop);
+                            if (hople)
+                                kq.Lop = lop;
+                            kq.Phone = ((Excel.Range)range.Cells[row, 7]).Text.Trim();
+                            kq.ChuyenNganh = int.Parse(((Excel.Range)range.Cells[row, 8]).Text.Trim());
+                            float diem;
+                            hople = float.TryParse(((Excel.Range)range.Cells[row, 9]).Text.Trim(), out diem);
+                            if (hople)
+                                kq.Diem = float.Parse(((Excel.Range)range.Cells[row, 9]).Text.Trim());
+                            int tongtc;
+                            hople = int.TryParse(((Excel.Range)range.Cells[row, 10]).Text.Trim(), out tongtc);
+                            if (hople)
+                                kq.TongTC = tongtc;
+                            kq.Block = false;
+                            kq.ChucVu = 1;
+                            kq.IdUT = 1;
+                            try
+                            {
+                                db.Entry(kq).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                ViewBag.Error = "Quá trình thực hiện thất bại";
+                                return RedirectToAction("Index");
+                            }
+                        }
+                    }    
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.Error = "Loại file không chính xác<br>";
+                    return RedirectToAction("Index");
+                }    
+            }    
         }
 
         [Authorize(Roles = "*,quanlysinhvien")]

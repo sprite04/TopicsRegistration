@@ -19,6 +19,19 @@
 }
 
 @section script{
+    <script type="text/javascript">
+        function fileCheck(obj) {
+            var fileExtension = ['xls', 'xlsx', 'xlsm'];
+            if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                alert("Only '.xls','.xlsx', '.xlsm' formats are allowed.");
+            }
+        }
+
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
     <script>
         $(function () {
             $("#example1").DataTable({
@@ -48,12 +61,47 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
+                        <h3 class="card-title">Import</h3>
+
+                    </div>
+
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @using (Html.BeginForm("Import", "QLNguoiDung", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                    {
+                                        @Html.Raw(ViewBag.Error)
+
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label m-0 p-0">Excel File</label>
+                                            <div class="col-sm-5 d-inline-block">
+                                                @Html.Label("excelfile", "Choose File", new { @for = "excelfile", @class = "custom-file-label" })
+                                                <input class="custom-file-input" type="file" name="excelfile" id="excelfile" onchange="fileCheck(this);" />
+                                                
+                                            </div>
+                                            <div class="col-sm-5 d-inline-block" style="top:4px">
+                                                    <input class="input-group-text" value="Save" type="submit" id="">
+                                            </div>
+
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card">
+                    <div class="card-header">
                         <h3 class="card-title">Sinh viên</h3>
                         <a class="btn btn-success float-right" href="@Url.Action("Create","QLNguoiDung")">
                             Thêm
                         </a>
                     </div>
-                    
+
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
