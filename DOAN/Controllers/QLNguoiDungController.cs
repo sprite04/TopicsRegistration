@@ -262,6 +262,7 @@ namespace DOAN.Controllers
             }
         }
 
+
         [Authorize(Roles = "*,quanlysinhvien")]
         public ActionResult Edit(int id)
         {

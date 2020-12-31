@@ -1909,6 +1909,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Common\Encryptor.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\QLCauHinhController.cs" />
     <Compile Include="Controllers\QLDeTaiController.cs" />
     <Compile Include="Controllers\QLLopController.cs" />
     <Compile Include="Controllers\QLNguoiDungController.cs" />
@@ -2144,6 +2145,10 @@
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Views\QLDeTai\LoaiDeTaiTheoNienKhoaCuaTungGV.cshtml" />
     <Content Include="Views\QLDeTai\DeTaiSinhVien.cshtml" />
+    <Content Include="Views\QLCauHinh\Index.cshtml" />
+    <Content Include="Views\QLCauHinh\Create.cshtml" />
+    <Content Include="Views\QLCauHinh\Edit.cshtml" />
+    <Content Include="Views\QLCauHinh\ThemNienKhoa.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

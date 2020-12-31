@@ -1,0 +1,152 @@
+﻿@using DOAN.Models;
+@model IEnumerable<CAUHINH>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+}
+
+
+@section header{
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Dashboard")">Trang chu</a></li>
+            <li class="breadcrumb-item">Danh sach loai de tai</li>
+        </ol>
+    </div>
+}
+
+@section script{
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+        $(".DeleteId").prepend("<i class='far fa-trash-alt'></i>");
+
+    </script>
+}
+
+<section class="content">
+    <div class="container">
+        @if (ViewBag.Error == 1)
+        {
+            <div class="alert alert-warning ">
+                Quá trình thực hiện không thành công
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 2)
+        {
+            <div class="alert alert-warning ">
+                Đã tồn tại cấu hình này
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 3)
+        {
+            <div class="alert alert-warning ">
+                Niên khoá đã tồn tại. Thực hiện chỉnh sửa niên khoá thành công.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
+</section>
+
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Danh sách cấu hình</h3>
+
+                        <a class="btn btn-success float-right" href="@Url.Action("Create","QLCauHinh")">
+                            Tạo cấu hình
+                        </a>
+                        <a class="btn btn-warning float-right mr-1" href="@Url.Action("ThemNienKhoa","QLCauHinh")">
+                            Thêm niên khoá
+                        </a>
+                    </div>
+
+
+
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên cấu hình</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int i = 1;
+                                            }
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr id="row1_@item.IdCauHinh">
+                                                    <td>
+                                                        <span>@i</span>
+                                                        @{ i++;}
+                                                    </td>
+                                                    <td>
+                                                        <span>@Url.Content(item.LOAIDETAI.TenLoai + " | " + item.NIENKHOA1.TenNK + " (" + item.NIENKHOA1.NamBD + "-" + item.NIENKHOA1.NamKT + ") " + " | Học kỳ " + item.HocKy + " (" + item.NamHocBatDauHocKy + "-" + item.NamHocKetThucHocKy + ") ")</span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <a class="btn btn-info" href="@Url.Action("Edit","QLCauHinh",new { id=item.IdCauHinh })">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </a>
+
+                                                            @Ajax.ActionLink(" ", "Delete", "QLCauHinh", new { id = item.IdCauHinh }, new AjaxOptions { Confirm = "Bạn có muốn xoá người dùng này?", OnComplete = "$('#row1_" + @item.IdCauHinh + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-danger DeleteId" })
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+</a>
