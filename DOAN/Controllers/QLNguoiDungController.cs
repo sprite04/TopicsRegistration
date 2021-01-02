@@ -425,5 +425,14 @@ namespace DOAN.Controllers
                 return Content("<script> alert(\"Quá trình thực hiện thất bại\")</script>");
             }
         }
+
+        public ActionResult ChiTietNguoiDung()
+        {
+            var nd = Session["TaiKhoan"] as NGUOIDUNG;
+            if (nd == null)
+                return HttpNotFound();
+
+            return View(nd);
+        }
     }
 }

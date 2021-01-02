@@ -2174,6 +2174,7 @@
     <Content Include="Views\QLCauHinh\Create.cshtml" />
     <Content Include="Views\QLCauHinh\Edit.cshtml" />
     <Content Include="Views\QLCauHinh\ThemNienKhoa.cshtml" />
+    <Content Include="Views\QLNguoiDung\ChiTietNguoiDung.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
