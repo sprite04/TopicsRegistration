@@ -1,4 +1,5 @@
 ﻿@using DOAN.Models;
+@using DOAN.Common;
 @model IEnumerable<DETAI>
 @{
     ViewBag.Title = "DeTaiSinhVien";
@@ -44,6 +45,47 @@
     </script>
 }
 
+<section class="content">
+    <div class="container">
+        @if (ViewBag.Error == -1)
+        {
+            <div class="alert alert-success ">
+                Quá trình thực hiện thành công
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 1)
+        {
+            <div class="alert alert-warning ">
+                Không thể gửi tập tin
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 2)
+        {
+            <div class="alert alert-success">
+                Không thể tải xuống tập tin
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 3)
+        {
+            <div class="alert alert-success">
+                Không thể huỷ gửi tập tin
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
+</section>
+
 <!-- Main content -->
 
 <section class="content">
@@ -74,7 +116,10 @@
 
                             </div>
 
+                            @{ 
+                                var dsFile=@GoogleDriveFilesRepository.GetContainsInFolder(item.CAUHINH1.folderDriveID);
 
+                            }
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -85,7 +130,7 @@
                                     <div class="row">
                                         @if (item.File_powerpoint == null)
                                         {
-                                            using (Html.BeginForm("NopBai", "QLDeTai",new {id=item.IdDeTai, loai=1 }, FormMethod.Post, new { @enctype = "multipart/form-data", @style="width:32%", @class = "mr-3 ml-1" }))
+                                            using (Html.BeginForm("NopBai", "QLDeTai",new {id=item.IdDeTai, loai=1, FolderId=item.CAUHINH1.folderDriveID }, FormMethod.Post, new { @enctype = "multipart/form-data", @style="width:32%", @class = "mr-3 ml-1" }))
                                             {
                                                 <div class="form-group">
                                                     <div class="card">
@@ -111,9 +156,9 @@
                                                         <div class="card-header"><h4 class="card-title">File PowerPoint</h4></div>
                                                         <div class="card-body">
                                                             <div class="card">
-                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, fileName=item.File_powerpoint })">@item.File_powerpoint</a></div>
+                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai,loai=1})">@dsFile.SingleOrDefault(x=>x.Id== item.File_powerpoint).Name</a></div>
                                                             </div>
-                                                            <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="">
+                                                            <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="" onclick="return confirm('Bạn có muốn xoá người dùng này?');">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -122,7 +167,7 @@
                                         }
                                         @if (item.File_word == null)
                                         {
-                                            using (Html.BeginForm("NopBai", "QLDeTai", new {loai=2, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%", @class="mr-3" }))
+                                            using (Html.BeginForm("NopBai", "QLDeTai", new {loai=2, id=item.IdDeTai, FolderId = item.CAUHINH1.folderDriveID }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%", @class="mr-3" }))
                                             {
                                                 <div class="form-group ">
                                                     <div class="card">
@@ -148,7 +193,7 @@
                                                         <div class="card-header"><h4 class="card-title">File Word</h4></div>
                                                         <div class="card-body">
                                                             <div class="card">
-                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, fileName=item.File_word })">@item.File_word</a></div>
+                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, loai=2 })">@item.File_word</a></div>
                                                             </div>
                                                             <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="">
                                                         </div>
@@ -158,7 +203,7 @@
                                         }
                                         @if (item.File_source == null)
                                         {
-                                            using (Html.BeginForm("NopBai", "QLDeTai", new {loai=3, id=item.IdDeTai }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%" }))
+                                            using (Html.BeginForm("NopBai", "QLDeTai", new {loai=3, id=item.IdDeTai, FolderId = item.CAUHINH1.folderDriveID }, FormMethod.Post, new { @enctype = "multipart/form-data", @style = "width:32%" }))
                                             {
                                                 <div class="form-group ">
                                                     <div class="card">
@@ -185,7 +230,7 @@
                                                         <div class="card-header"><h4 class="card-title">File Source</h4></div>
                                                         <div class="card-body">
                                                             <div class="card">
-                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, fileName=item.File_source })">@item.File_source</a></div>
+                                                                <div class="card-body pt-md-2 pb-md-2"><a href="@Url.Action("Download","QLDeTai",new {id=item.IdDeTai, loai=3 })">@item.File_source</a></div>
                                                             </div>
                                                             <input class="btn btn-outline-secondary btn-block" value="Huỷ gửi" type="submit" id="">
                                                         </div>

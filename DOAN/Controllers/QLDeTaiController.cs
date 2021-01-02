@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
+using DOAN.Common;
 using DOAN.Models;
 using DOAN.ModelView;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -35,99 +36,140 @@ namespace DOAN.Controllers
             return View(list);
         }
 
-        public ActionResult NopBai(int id,int loai,HttpPostedFileBase file)
+        public ActionResult NopBai(int id,int loai,HttpPostedFileBase file, string FolderId)
         {
-            DETAI detai = db.DETAIs.Find(id);
-            if (detai == null)
-                return HttpNotFound();
-            var folder = Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai);
-            if (!Directory.Exists(folder))
+            int error = 0;
+            try
             {
-                Directory.CreateDirectory(folder);
-            }
-            if (file != null && file.ContentLength > 0)
-            {
-                var fileName = Path.GetFileName(file.FileName);
-                string path = Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai +"/"+ fileName);
-                if (!System.IO.File.Exists(path))
-                    file.SaveAs(path);
-                if (loai == 1)
+                DETAI detai = db.DETAIs.Find(id);
+                if (detai == null)
+                    return HttpNotFound();
+                if (file != null && file.ContentLength > 0)
                 {
-                    detai.File_powerpoint = fileName;
-                }
-                if(loai==2)
-                {
-                    detai.File_word = fileName;
-                }
-                if(loai==3)
-                {
-                    detai.File_source = fileName;
-                }
-                try
-                {
-                    db.Entry(detai).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
-                catch (Exception)
-                {
-
-                    throw;
+                    if (loai == 1)
+                    {
+                        detai.File_powerpoint = GoogleDriveFilesRepository.FileUploadInFolder(FolderId, file);
+                    }
+                    if (loai == 2)
+                    {
+                        detai.File_word = GoogleDriveFilesRepository.FileUploadInFolder(FolderId, file);
+                    }
+                    if (loai == 3)
+                    {
+                        detai.File_source = GoogleDriveFilesRepository.FileUploadInFolder(FolderId, file);
+                    }
+                    try
+                    {
+                        db.Entry(detai).State = EntityState.Modified;
+                        db.SaveChanges();
+                        error = -1;
+                    }
+                    catch (Exception)
+                    {
+                        error = 1;
+                    }
                 }
             }
-            return RedirectToAction("DeTaiSinhVien");  
+            catch (Exception)
+            {
+                error = 1;
+            }
+            
+            return RedirectToAction("DeTaiSinhVien", new { error=error});  
         }
 
-        public FileResult Download(int id,string fileName)
+        public ActionResult Download(int id,int loai)
         {
-            DETAI detai = db.DETAIs.Find(id);
-            if (detai == null)
-                return null;
-            string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai + "/"), fileName);
-            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            int error = 0;
+            try
+            {
+                DETAI detai = db.DETAIs.Find(id);
+                if (detai == null)
+                    return HttpNotFound();
+
+                if (loai == 1)
+                {
+                    string FilePath = GoogleDriveFilesRepository.DownloadGoogleFile(detai.File_powerpoint);
+                    Response.ContentType = "application/zip";
+                    Response.AddHeader("Content-Disposition", "attachment; filename=" + Path.GetFileName(FilePath));
+                    Response.WriteFile(System.Web.HttpContext.Current.Server.MapPath("~/GoogleDriveFiles/" + Path.GetFileName(FilePath)));
+                    Response.End();
+                    Response.Flush();
+                }
+                if (loai == 2)
+                {
+                    string FilePath = GoogleDriveFilesRepository.DownloadGoogleFile(detai.File_word);
+                    Response.ContentType = "application/zip";
+                    Response.AddHeader("Content-Disposition", "attachment; filename=" + Path.GetFileName(FilePath));
+                    Response.WriteFile(System.Web.HttpContext.Current.Server.MapPath("~/GoogleDriveFiles/" + Path.GetFileName(FilePath)));
+                    Response.End();
+                    Response.Flush();
+                }
+                if (loai == 3)
+                {
+                    string FilePath = GoogleDriveFilesRepository.DownloadGoogleFile(detai.File_source);
+                    Response.ContentType = "application/zip";
+                    Response.AddHeader("Content-Disposition", "attachment; filename=" + Path.GetFileName(FilePath));
+                    Response.WriteFile(System.Web.HttpContext.Current.Server.MapPath("~/GoogleDriveFiles/" + Path.GetFileName(FilePath)));
+                    Response.End();
+                    Response.Flush();
+                }
+            }
+            catch (Exception)
+            {
+                error = 2; //Khong the tai xuong tap tin
+            }
+            return RedirectToAction("DeTaiSinhVien", new { error = error });
         }
 
         public ActionResult XoaBaiNop(int id, int loai)
         {
-            DETAI detai = db.DETAIs.Find(id);
-            if (detai == null)
-                return HttpNotFound();
-            var folder = Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai);
-            if (Directory.Exists(folder))
+            int error = 0;
+            try
             {
-                if(loai==1)
+                DETAI detai = db.DETAIs.Find(id);
+                if (detai == null)
+                    return HttpNotFound();
+                var list = GoogleDriveFilesRepository.GetContainsInFolder(detai.CAUHINH1.folderDriveID);
+                if (loai == 1)
                 {
-                    string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/"+ detai.IdDeTai+"/"), detai.File_powerpoint);
-                    if (System.IO.File.Exists(fullPath))
-                        System.IO.File.Delete(fullPath);
+                    var file = list.SingleOrDefault(x => x.Id == detai.File_powerpoint);
+                    if (file != null)
+                        GoogleDriveFilesRepository.DeleteFile(file);
                     detai.File_powerpoint = null;
                 }
                 if (loai == 2)
                 {
-                    string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai + "/"), detai.File_word);
-                    if (System.IO.File.Exists(fullPath))
-                        System.IO.File.Delete(fullPath);
+                    var file = list.SingleOrDefault(x => x.Id == detai.File_word);
+                    if (file != null)
+                        GoogleDriveFilesRepository.DeleteFile(file);
                     detai.File_word = null;
                 }
                 if (loai == 3)
                 {
-                    string fullPath = Path.Combine(Server.MapPath("~/assets/FileDoAn/" + detai.IdDeTai + "/"), detai.File_source);
-                    if (System.IO.File.Exists(fullPath))
-                        System.IO.File.Delete(fullPath);
+                    var file = list.SingleOrDefault(x => x.Id == detai.File_source);
+                    if (file != null)
+                        GoogleDriveFilesRepository.DeleteFile(file);
                     detai.File_source = null;
                 }
                 try
                 {
                     db.Entry(detai).State = EntityState.Modified;
                     db.SaveChanges();
+                    error = -1;
                 }
                 catch (Exception)
                 {
-
-                    throw;
+                    error = 3; //Quá trình xoá thực hiện thất bại
                 }
             }
-            return RedirectToAction("DeTaiSinhVien");
+            catch (Exception)
+            {
+
+                error = 3;
+            }
+            
+            return RedirectToAction("DeTaiSinhVien", new { error=error});
         }
 
         public ActionResult Export(int id)
@@ -656,14 +698,15 @@ namespace DOAN.Controllers
         }
 
         [Authorize(Roles = "quanlinhom")]
-        public ActionResult DeTaiSinhVien()
+        public ActionResult DeTaiSinhVien(int error=0)
         {
             NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
             if (user == null)
                 return HttpNotFound();
-            
+
             var list = db.DETAIs.Where(x => DateTime.Compare(DateTime.Now, x.ThoiGianKTBaoVe ?? DateTime.Now) <= 0 && db.SINHVIEN_DETAI.Any(y=>y.DeTai==x.IdDeTai&&y.SinhVien==user.IdUser));
             ViewBag.KQ = list.Count()>0;
+            ViewBag.Error = error;
             return View(list);
         }
     }
