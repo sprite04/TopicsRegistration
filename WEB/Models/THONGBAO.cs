@@ -15,9 +15,6 @@ namespace WEB.Models
         [StringLength(200)]
         public string TenTB { get; set; }
 
-        [StringLength(1000)]
-        public string NoiDung { get; set; }
-
         public int? NguoiDang { get; set; }
 
         public DateTime? NgayDang { get; set; }
@@ -27,6 +24,9 @@ namespace WEB.Models
         public bool? CoTinMoi { get; set; }
 
         public bool? IsDelete { get; set; }
+
+        [Column(TypeName = "ntext")]
+        public string NoiDung { get; set; }
 
         public virtual NGUOIDUNG NGUOIDUNG { get; set; }
     }

@@ -1,0 +1,41 @@
+﻿@using DOAN.Models;
+@model THONGBAO
+
+
+@{
+    ViewBag.Title = "ChiTietThongBao";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+}
+
+<section class="content">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- Default box -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-9">
+                                <h1 class="card-title text-primary" style="font-size:20px">@Model.TenTB</h1><br />
+                                <span>@Url.Content(Model.NgayDang.ToString())</span>
+                            </div>
+                            <div class="col-3">
+                                <!-- Button trigger modal -->
+                                <a class="btn btn-info float-right" href="@Url.Action("ChinhSuaThongBao","QLThongBao",new { id=Model.IdTB})">
+                                    Chỉnh sửa
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @Html.Raw(Model.NoiDung)
+                    </div>
+                    <!-- /.card-footer-->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div>
+</section>

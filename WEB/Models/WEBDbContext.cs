@@ -31,6 +31,10 @@ namespace WEB.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CAUHINH>()
+                .Property(e => e.folderDriveID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CAUHINH>()
                 .HasMany(e => e.DETAIs)
                 .WithOptional(e => e.CAUHINH1)
                 .HasForeignKey(e => e.CauHinh);

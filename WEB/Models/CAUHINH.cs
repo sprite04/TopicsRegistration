@@ -52,6 +52,9 @@ namespace WEB.Models
 
         public int? NguoiTao { get; set; }
 
+        [StringLength(300)]
+        public string folderDriveID { get; set; }
+
         public virtual LOAIDETAI LOAIDETAI { get; set; }
 
         public virtual NGUOIDUNG NGUOIDUNG { get; set; }

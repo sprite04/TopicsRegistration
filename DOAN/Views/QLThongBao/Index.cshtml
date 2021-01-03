@@ -1,0 +1,98 @@
+﻿@using DOAN.Models;
+@using PagedList.Mvc;
+
+@model PagedList.IPagedList<THONGBAO>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/HomeLayout.cshtml";
+}
+
+@section style
+{
+    <style>
+        /* Pagination CSS */
+        .ul.pagination {
+            display: inline-block;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        ul.pagination li {
+            display: inline;
+        }
+
+            ul.pagination li a {
+                color: black;
+                float: left;
+                padding: 3px 11px;
+                text-decoration: none;
+                transition: background-color .3s;
+                border: 1px solid #ddd;
+            }
+
+                ul.pagination li a.active {
+                    background-color: #EB395F;
+                    color: white;
+                    border: 1px solid #EB395F;
+                }
+
+                ul.pagination li a:hover:not(.active) {
+                    background-color: #EB395F;
+                }
+
+        ul.pagination .active {
+            background-color: #EB395F;
+        }
+
+    </style>
+
+}
+
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card ">
+        <div class="card-header">
+            <h3 class="card-title">Thông báo</h3>
+
+            <a class="btn btn-success float-right" href="@Url.Action("TaoThongBao","QLThongBao")">
+                Tạo thông báo
+            </a>
+        </div>
+        <div class="card-body">
+            <section class="content">
+                @foreach (var item in Model)
+                {
+                    <!-- Default box -->
+                    <div class="card collapsed-card">
+                        <div class="card-header">
+                            <span class="btn btn-primary btn-sm float-left">
+                                @item.NgayDang
+                            </span>
+                            <a href="@Url.Action("ChiTietThongBao","QLThongBao",new { id=item.IdTB})"><span class="pl-3" style="font-size:18px; line-height:32px">@item.TenTB</span></a>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" title="Remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- /.card -->
+                }
+                @if (Model.PageCount > 1)
+                {
+                    <div class="float-right text-right  m-0">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }))
+                    </div>
+                }
+            </section>
+        </div>
+        
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>

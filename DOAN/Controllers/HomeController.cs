@@ -30,9 +30,14 @@ namespace DOAN.Controllers
                     list.Add(ch);
                 }
                 ViewBag.GiaTri = 0;
+                ViewBag.ThongBao = db.THONGBAOs.Where(x => x.IsDelete == false).Count();
+                ViewBag.GiaoVien = db.NGUOIDUNGs.Where(x => x.ChucVu > 1 && x.Block == false).Count();
+                ViewBag.SinhVien = db.NGUOIDUNGs.Where(x => x.ChucVu == 1 && x.Block == false).Count();
+                ViewBag.DeTai = db.DETAIs.Where(x => x.IsDelete == false && x.IsDuyet == true).Count();
                 ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh");
                 return View();
-            }    
+            }   
+
                 
             else
                 return RedirectToAction("DangNhap");
@@ -74,6 +79,8 @@ namespace DOAN.Controllers
                 ViewBag.Value = "";
                 ViewBag.GiaTri = 0;
             }
+
+            
             return View();
         }
 

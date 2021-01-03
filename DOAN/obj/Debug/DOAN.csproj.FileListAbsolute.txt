@@ -179,3 +179,7 @@ C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\Google.Apis.Drive.v2.pdb
 C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\Google.Apis.Drive.v2.xml
 C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\Google.Apis.Drive.v3.pdb
 C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\Google.Apis.Drive.v3.xml
+C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\PagedList.dll
+C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\PagedList.Mvc.dll
+C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\PagedList.xml
+C:\Users\Thuy Tien\Desktop\WEB\DOAN\bin\PagedList.Mvc.xml

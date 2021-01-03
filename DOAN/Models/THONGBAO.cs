@@ -15,7 +15,7 @@ namespace DOAN.Models
         [StringLength(200)]
         public string TenTB { get; set; }
 
-        [StringLength(1000)]
+        [Column(TypeName = "ntext")]
         public string NoiDung { get; set; }
 
         public int? NguoiDang { get; set; }
