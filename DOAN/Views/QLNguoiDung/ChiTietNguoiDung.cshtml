@@ -1,23 +1,84 @@
-﻿
+﻿@using DOAN.Models;
+@model NGUOIDUNG
+
 @{
     ViewBag.Title = "ChiTietNguoiDung";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
+    string anhcu = ViewBag.AnhCu;
 }
+
+
+@section script{
+    <script type="text/javascript">
+        function fileCheck(obj) {
+            var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+            if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            }
+
+        }
+
+    </script>
+
+}
+
+
+
 
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Profile</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">User Profile</li>
+                    <li class="breadcrumb-item"><a href="#">Trang chu</a></li>
+                    <li class="breadcrumb-item active">Thong tin nguoi dung</li>
                 </ol>
             </div>
         </div>
     </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container">
+        @if (ViewBag.Error == -1)
+        {
+            <div class="alert alert-success ">
+                Quá trình thực hiện thành công
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 1)
+        {
+            <div class="alert alert-warning ">
+                Quá trình thực hiện thất bại
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 2)
+        {
+            <div class="alert alert-warning ">
+                Mật khẩu xác nhận không khớp
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (ViewBag.Error == 3)
+        {
+            <div class="alert alert-warning ">
+                Nhập mật khẩu không đúng
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
 </section>
 
 <section class="content">
@@ -29,31 +90,55 @@
                 <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                         <div class="text-center">
-                            <img class="profile-user-img img-fluid img-circle" src="../../dist/img/user4-128x128.jpg" alt="User profile picture">
+                            @if (Model.Avatar == null)
+                            {
+                                if (Model.GioiTinh)
+                                {
+                                    <img src="~/assets/avatar/default/11.png" class="profile-user-img img-fluid img-circle" style="width:100px;height:102px" alt="User Image">
+                                }
+                                else
+                                {
+                                    <img src="~/assets/avatar/default/10.png" class="profile-user-img img-fluid img-circle" style="width:100px;height:102px" alt="User Image">
+                                }
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/assets/avatar/"+Model.Avatar)" style="width:100px;height:102px" class="profile-user-img img-fluid img-circle" alt="User Image">
+                            }
                         </div>
 
-                        <h3 class="profile-username text-center">Nina Mcintire</h3>
+                        <h3 class="profile-username text-center">@Url.Content(Model.Name)</h3>
 
-                        <p class="text-muted text-center">Software Engineer</p>
-
+                        <p class="text-muted text-center">@Model.CHUCVU1.TenCVu</p><br />
+                        <h6 class="text-muted text-center"><u><b>CHUYÊN NGÀNH</b></u></h6>
+                        <p class="text-muted text-center">@Model.CHUYENNGANH1.TenCNganh</p>
                         <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item">
-                                <b>Followers</b> <a class="float-right">1,322</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Following</b> <a class="float-right">543</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Friends</b> <a class="float-right">13,287</a>
-                            </li>
-                        </ul>
+                            @if (Model.ChucVu == 1)
+                            {
+                                <li class="list-group-item">
+                                    <b>MSSV</b> <a class="float-right">@Model.Username</a>
+                                </li>
+                            }
 
-                        <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                            <li class="list-group-item">
+                                <b>Ngày sinh</b> <a class="float-right">@DateTime.Parse(Model.NgaySinh==null ?  DateTime.Now.ToString(): Model.NgaySinh.ToString()).ToString("dd/MM/yyyy")</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Giới tính</b> <a class="float-right">@Url.Content(Model.GioiTinh ? "Nữ" : "Nam")</a>
+                            </li>
+
+                            @if (Model.ChucVu > 1)
+                            {
+                                <li class="list-group-item">
+                                    <b>Học vị</b> <a class="float-right">@Model.HocVi</a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                     <!-- /.card-body -->
                 </div>
                 <!-- /.card -->
-               
+
             </div>
             <!-- /.col -->
             <div class="col-md-9">
@@ -61,8 +146,9 @@
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
                             <li class="nav-item float-right"><a class="nav-link active" href="#activity" data-toggle="tab">Thông tin</a></li>
-                            
+
                             <li class="nav-item float-right"><a class="nav-link" href="#settings" data-toggle="tab">Cập nhật</a></li>
+                            <li class="nav-item float-right"><a class="nav-link" href="#changepassword" data-toggle="tab">Đổi mật khẩu</a></li>
                         </ul>
                     </div><!-- /.card-header -->
                     <div class="card-body p-0 m-0">
@@ -71,21 +157,76 @@
                                 <!-- Post -->
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-5 col-sm-3">
+                                        <div class="col-5 col-sm-2">
                                             <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
-                                                <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Khoá học</a>
-                                                <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Thông tin liên lạc</a>
+                                                @if (Model.ChucVu == 1)
+                                                {
+                                                    <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Khoá học</a>
+                                                    <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Thông tin liên lạc</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="nav-link active" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Thông tin liên lạc</a>
+                                                }
+
                                             </div>
                                         </div>
                                         <div class="col-7 col-sm-9">
                                             <div class="tab-content" id="vert-tabs-tabContent">
-                                                <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
-                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin malesuada lacus ullamcorper dui molestie, sit amet congue quam finibus. Etiam ultricies nunc non magna feugiat commodo. Etiam odio magna, mollis auctor felis vitae, ullamcorper ornare ligula. Proin pellentesque tincidunt nisi, vitae ullamcorper felis aliquam id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin id orci eu lectus blandit suscipit. Phasellus porta, ante et varius ornare, sem enim sollicitudin eros, at commodo leo est vitae lacus. Etiam ut porta sem. Proin porttitor porta nisl, id tempor risus rhoncus quis. In in quam a nibh cursus pulvinar non consequat neque. Mauris lacus elit, condimentum ac condimentum at, semper vitae lectus. Cras lacinia erat eget sapien porta consectetur.
-                                                </div>
-                                                <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
-                                                    Mauris tincidunt mi at erat gravida, eget tristique urna bibendum. Mauris pharetra purus ut ligula tempor, et vulputate metus facilisis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Maecenas sollicitudin, nisi a luctus interdum, nisl ligula placerat mi, quis posuere purus ligula eu lectus. Donec nunc tellus, elementum sit amet ultricies at, posuere nec nunc. Nunc euismod pellentesque diam.
-                                                </div>
-                                               
+                                                @if (Model.ChucVu == 1)
+                                                {
+                                                    <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                                                        <div class="row pl-3 ml-3 pt-1 mt-1">
+                                                            <div class="col-5"><b>Khoá học</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Url.Content("Khoá " + Model.LOP1.NIENKHOA.NamBD)</div>
+                                                        </div>
+                                                        <div class="row pl-3 ml-3 pt-2 mt-2">
+                                                            <div class="col-5"><b>Niên khoá</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Url.Content(Model.LOP1.NIENKHOA.NamBD + " - " + Model.LOP1.NIENKHOA.NamKT)</div>
+                                                        </div>
+                                                        <div class="row pl-3 ml-3 pt-2 mt-2">
+                                                            <div class="col-5"><b>Năm hết hạn đào tạo</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Url.Content(Model.LOP1.NIENKHOA.NamBD + " - " + (Model.LOP1.NIENKHOA.NamBD + 8))</div>
+                                                        </div>
+                                                        <div class="row pl-3 ml-3 pt-2 mt-2 mb-3">
+                                                            <div class="col-5"><b>Lớp sinh viên</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Url.Content(Model.LOP1.TenLop)</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                                                        <div class="row pl-3 ml-3 pt-1 mt-1">
+                                                            <div class="col-5"><b>Điện thoại</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Model.Phone</div>
+                                                        </div>
+                                                        <div class="row pl-3 ml-3 pt-2 mt-2">
+                                                            <div class="col-5"><b>Email</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Model.Email</div>
+                                                        </div>
+                                                    </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="tab-pane text-left fade show active" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                                                        <div class="row pl-3 ml-3 pt-1 mt-1">
+                                                            <div class="col-5"><b>Điện thoại</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Model.Phone</div>
+                                                        </div>
+                                                        <div class="row pl-3 ml-3 pt-2 mt-2">
+                                                            <div class="col-5"><b>Email</b></div>
+                                                            <div class="col-1">:</div>
+                                                            <div class="col-6">@Model.Email</div>
+                                                        </div>
+                                                    </div>
+                                                }
+
                                             </div>
                                         </div>
                                     </div>
@@ -94,57 +235,101 @@
                             <!-- /.tab-pane -->
                             <!-- /.tab-content -->
                             <div class="tab-pane pl-4 pt-2 pb-2 pr-4 m-2" id="settings">
-                                <form class="form-horizontal">
+                                @using (Html.BeginForm("CapNhatThongTin", "QLNguoiDung", new { AnhCu = anhcu }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model => model.IdUser)
+                                    @Html.HiddenFor(model => model.Block)
+                                    @Html.HiddenFor(model => model.IdUT)
+                                    @Html.HiddenFor(model => model.RegisterDate)
+                                    @Html.HiddenFor(model => model.LastVisitDate)
+                                    @Html.HiddenFor(model => model.HocVi)
+                                    @Html.HiddenFor(model => model.ChucVu)
+                                    @Html.HiddenFor(model => model.Password)
+                                    @Html.HiddenFor(model => model.Name)
+                                    @Html.HiddenFor(model => model.ChuyenNganh)
+                                    @Html.HiddenFor(model => model.Lop)
+                                    @Html.HiddenFor(model => model.Diem)
+                                    @Html.HiddenFor(model => model.TongTC)
+                                    @Html.HiddenFor(model => model.Username)
                                     <div class="form-group row">
-                                        <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                                        <label for="inputName" class="col-sm-2 col-form-label">Avatar</label>
                                         <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputName" placeholder="Name">
+                                            @Html.LabelFor(model => model.Avatar, "Choose File", new { @for = "Avatar", @class = "custom-file-label" })
+                                            <input class="custom-file-input" type="file" name="Avatar" id="Avatar" onchange="fileCheck(this);" />
+                                            @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                                        <label for="inputName" class="col-sm-2 col-form-label">Nữ</label>
                                         <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                                            @Html.EditorFor(model => model.GioiTinh)
+                                            @Html.ValidationMessageFor(model => model.GioiTinh, "", new { @class = "text-danger" })
+
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="inputName2" class="col-sm-2 col-form-label">Name</label>
+                                        <label for="inputEmail" class="col-sm-2 col-form-label">Ngày sinh</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputName2" placeholder="Name">
+                                            @Html.TextBoxFor(model => model.NgaySinh, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control", @id = "inputBD" })
+                                            @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="inputExperience" class="col-sm-2 col-form-label">Experience</label>
+                                        <label for="inputEmail" class="col-sm-2 col-form-label">Điện thoại</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
+                                            @Html.TextBoxFor(model => model.Phone, new { @type = "text", @class = "form-control", @id = "inputPhone", @placeholder = "Phone Number" })
+                                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="inputSkills" class="col-sm-2 col-form-label">Skills</label>
+                                        <label for="inputName2" class="col-sm-2 col-form-label">Email</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
+                                            @Html.TextBoxFor(model => model.Email, new { @type = "text", @class = "form-control", @id = "inputMail", @placeholder = "Mail" })
+                                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="offset-sm-2 col-sm-10">
+                                            <button type="submit" class="btn btn-danger float-right">Lưu</button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="tab-pane pl-4 pt-2 pb-2 pr-4 m-2" id="changepassword">
+                                @using (Html.BeginForm("ThayDoiMatKhau", "QLNguoiDung", FormMethod.Post))
+                                {
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Mật khẩu</label>
+                                        <div class="col-sm-9">
+                                            <input name="matkhaucu" type="password" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Mật khẩu mới</label>
+                                        <div class="col-sm-9">
+                                            <input name="matkhaumoi" type="password" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-sm-3 col-form-label">Nhập lại mật khẩu</label>
+                                        <div class="col-sm-9">
+                                            <input name="xacnhan" type="password" class="form-control"/>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="offset-sm-2 col-sm-10">
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
-                                                </label>
-                                            </div>
+                                            <button type="submit" class="btn btn-danger float-right">Lưu</button>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <div class="offset-sm-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger">Submit</button>
-                                        </div>
-                                    </div>
-                                </form>
+                                }
                             </div>
                         </div>
-                        
+
                     </div><!-- /.card-body -->
-                    
+
                 </div>
                 <!-- /.nav-tabs-custom -->
             </div>
