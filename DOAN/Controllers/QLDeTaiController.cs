@@ -26,14 +26,54 @@ namespace DOAN.Controllers
                 return HttpNotFound();
 
             ViewBag.ChuyenNganh = db.CHUYENNGANHs;
-
             ViewBag.SVDT = db.SINHVIEN_DETAI;
-
             ViewBag.XinVaoNhom = db.XINVAONHOMs;
 
+            var listCN = db.CHUYENNGANHs;
 
-            var list = db.DETAIs.Where(x => x.IsDuyet == true && x.CauHinh==cauhinh.IdCauHinh);
+            var list = db.DETAIs.Where(x => x.IsDuyet == true && x.CauHinh == cauhinh.IdCauHinh);
+
+            ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh");
+            ViewBag.GiaTri = 0;
+            ViewBag.DanhSach = list;
+            ViewBag.CauHinh = cauhinh;
             return View(list);
+        }
+
+        [HttpPost]
+        public ActionResult Index(int id,FormCollection f)
+        {
+            var kq = f["ddlChuyenNganh"];
+            CAUHINH cauhinh = db.CAUHINHs.SingleOrDefault(x => x.IdCauHinh == id);
+            if (cauhinh == null)
+                return HttpNotFound();
+
+            
+            ViewBag.ChuyenNganh = db.CHUYENNGANHs;
+            ViewBag.SVDT = db.SINHVIEN_DETAI;
+            ViewBag.XinVaoNhom = db.XINVAONHOMs;
+
+            var listCN = db.CHUYENNGANHs;
+
+            if (kq!="")
+            {
+                int giatri = int.Parse(kq);
+                var list = db.DETAIs.Where(x => x.IsDuyet == true && x.CauHinh == cauhinh.IdCauHinh && x.ChuyenNganh == giatri);
+                ViewBag.DanhSach = list;
+                ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh",giatri);
+                ViewBag.GiaTri = giatri;
+                ViewBag.CauHinh = cauhinh;
+                return View(list);
+            }
+            else
+            {
+                var list = db.DETAIs.Where(x => x.IsDuyet == true && x.CauHinh == cauhinh.IdCauHinh);
+                ViewBag.DanhSach = list;
+                ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh");
+                ViewBag.GiaTri = 0;
+                ViewBag.CauHinh = cauhinh;
+                return View(list);
+            }    
         }
 
         public ActionResult NopBai(int id,int loai,HttpPostedFileBase file, string FolderId)
@@ -269,7 +309,7 @@ namespace DOAN.Controllers
 
             if(detai.TruongNhom==null)
             {
-                //detai.TruongNhom = user.IdUT;
+                detai.TruongNhom = user.IdUser;
                 //detai.CAUHINH1 = null;
                 //detai.CHUYENNGANH1 = null;
                 //detai.NGUOIDUNG = null;
@@ -285,6 +325,10 @@ namespace DOAN.Controllers
                     sv_dt.DeTai = detai.IdDeTai;
                     sv_dt.SinhVien = user.IdUser;
                     db.SINHVIEN_DETAI.Add(sv_dt);
+                    db.SaveChanges();
+
+                    var dsBo = db.XINVAONHOMs.Where(x => x.NguoiGui == user.IdUser);
+                    db.XINVAONHOMs.RemoveRange(dsBo);
                     db.SaveChanges();
                     return Redirect(strURL);
                 }
@@ -372,6 +416,7 @@ namespace DOAN.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "*,themxoasuadetai")]
         public ActionResult TaoDeTai(DETAI detai,FormCollection f)
         {
             NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
@@ -457,6 +502,7 @@ namespace DOAN.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "*,themxoasuadetai")]
         public ActionResult SuaDeTai(DETAI detai,FormCollection f)
         {
             var kq = f["dkkcn"];
@@ -592,15 +638,15 @@ namespace DOAN.Controllers
         }
 
         [Authorize(Roles = "quanlinhom")]
-        public ActionResult DanhSachXinVaoNhom()
+        public ActionResult DanhSachXinVaoNhom(int error=0)
         {
-            Session["Link"] = Request.Url.ToString();
             NGUOIDUNG nguoidung = Session["TaiKhoan"] as NGUOIDUNG;
             if (nguoidung == null)
                 return HttpNotFound();
             ViewBag.KQ = db.XINVAONHOMs.Count(x => x.DETAI1.TruongNhom == nguoidung.IdUser)>0;
             ViewBag.XinVaoNhom = db.XINVAONHOMs;
             ViewBag.SinhVienDeTai = db.SINHVIEN_DETAI;
+            ViewBag.Error = error;
             var list = db.DETAIs.Where(x => x.TruongNhom == nguoidung.IdUser && (DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianKetThucDK ?? DateTime.Now) <= 0) && nguoidung.IdUT == 1);
             return View(list);
         }
@@ -608,8 +654,7 @@ namespace DOAN.Controllers
         [Authorize(Roles = "quanlinhom")]
         public ActionResult ChoVaoNhom(int idDT,int idND)
         {
-
-            string strURL = Session["Link"] as string;
+            int error = 0;
             NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
             if (user == null)
                 return HttpNotFound();
@@ -619,7 +664,8 @@ namespace DOAN.Controllers
                 return HttpNotFound();
             if (db.SINHVIEN_DETAI.Count(x => x.DeTai == idDT && x.SinhVien == idND) >= detai.SoLuongSV)
             {
-                return Content("<script> alert(\"Đề tài này đã đủ số lượng người\")</script>");
+                error = 1;
+                return RedirectToAction("DanhSachXinVaoNhom", "QLDeTai", new { error = error });
             }
             SINHVIEN_DETAI sv_dt = new SINHVIEN_DETAI();
             sv_dt.DeTai = idDT;
@@ -629,17 +675,18 @@ namespace DOAN.Controllers
                 db.SINHVIEN_DETAI.Add(sv_dt);
                 db.SaveChanges();
 
-                var ds=db.XINVAONHOMs.Where(x => x.DeTai == idDT && x.NguoiGui == idND);
+                var ds=db.XINVAONHOMs.Where(x => x.NguoiGui == idND);
                 db.XINVAONHOMs.RemoveRange(ds);
                 db.SaveChanges();
-                if (strURL != null)
-                    return Redirect(strURL);
-                else
-                    return RedirectToAction("DanhSachXinVaoNhom");
+
+
+                error = -1;
+                return RedirectToAction("DanhSachXinVaoNhom", "QLDeTai", new { error = error });
             }
             catch (Exception e)
             {
-                return Content("<script> alert(\"Bạn không có quyền duyệt đề tài này\")</script>");
+                error = 2;
+                return RedirectToAction("DanhSachXinVaoNhom", "QLDeTai", new { error = error });
             }
         }
 

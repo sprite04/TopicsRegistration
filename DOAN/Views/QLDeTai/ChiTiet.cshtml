@@ -180,7 +180,7 @@
                                                     <span>Đăng ký</span>
                                                 </th>
                                                 <td>
-                                                    @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DeTai == Model.IdDeTai && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh)&& (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDK ?? DateTime.Now) <= 0))
+                                                    @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DETAI1.CauHinh == Model.CauHinh && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh)&& (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDK ?? DateTime.Now) <= 0))
                                                     {
                                                         <div class="btn-group btn-group-sm">
                                                             @if (Model.TruongNhom == null)

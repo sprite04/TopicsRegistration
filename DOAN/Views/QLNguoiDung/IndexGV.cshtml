@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "IndexGV";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
 }
 
 
@@ -12,7 +13,7 @@
     </div>
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index","Dashboard")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Trang chu</a></li>
             <li class="breadcrumb-item">Giang vien</li>
         </ol>
     </div>
@@ -49,11 +50,13 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Giảng viên</h3>
-                        <!-- Button trigger modal -->
-                        <a class="btn btn-success float-right" href="@Url.Action("CreateGV","QLNguoiDung")">
-                            Thêm
-                        </a>
-
+                        @if (user != null && user.IdUT == 5)
+                        {
+                            <!-- Button trigger modal -->
+                            <a class="btn btn-success float-right" href="@Url.Action("CreateGV","QLNguoiDung")">
+                                Thêm
+                            </a>
+                        }
                     </div>
 
 
@@ -68,22 +71,27 @@
                                                 <th>@Html.DisplayNameFor(model => model.Name)</th>
                                                 <th>@Html.DisplayNameFor(model => model.Phone)</th>
                                                 <th>@Html.DisplayNameFor(model => model.CHUYENNGANH1.TenCNganh)</th>
-                                                <th></th>
+                                                @if (user != null && user.IdUT == 5)
+                                                {
+                                                    <th></th>
+                                                }
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id="row1_@item.IdUser">
-                                                    <td>
-                                                        @Html.DisplayFor(modelItem => item.Name)
-                                                    </td>
-                                                    <td>
-                                                        @Html.DisplayFor(modelItem => item.Phone)
-                                                    </td>
-                                                    <td>
-                                                        @Html.DisplayFor(modelItem => item.CHUYENNGANH1.TenCNganh)
-                                                    </td>
+                                            <tr id="row1_@item.IdUser">
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Phone)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.CHUYENNGANH1.TenCNganh)
+                                                </td>
+                                                @if (user != null && user.IdUT == 5)
+                                                {
                                                     <td>
                                                         <div class="btn-group btn-group-sm">
                                                             <a class="btn btn-info" href="@Url.Action("EditGV","QLNguoiDung",new { id=item.IdUser })">
@@ -94,7 +102,8 @@
                                                         </div>
 
                                                     </td>
-                                                </tr>
+                                                }
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

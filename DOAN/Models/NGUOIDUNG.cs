@@ -1,7 +1,8 @@
-namespace DOAN.Models
+﻿namespace DOAN.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
@@ -24,6 +25,7 @@ namespace DOAN.Models
         public int IdUser { get; set; }
 
         [StringLength(50)]
+        [DisplayName("Họ tên")]
         public string Name { get; set; }
 
         [StringLength(50)]
@@ -44,29 +46,40 @@ namespace DOAN.Models
         public DateTime? LastVisitDate { get; set; }
 
         [StringLength(15)]
+        [DisplayName("SĐT")]
         public string Phone { get; set; }
 
         [StringLength(50)]
+        [DisplayName("Học vị")]
         public string HocVi { get; set; }
 
+        [DisplayName("Chuyên ngành")]
         public int? ChuyenNganh { get; set; }
 
+        [DisplayName("Lớp")]
         public int? Lop { get; set; }
 
+        [DisplayName("Chức vụ")]
         public int? ChucVu { get; set; }
 
+
+        [DisplayName("Điểm")]
         public double? Diem { get; set; }
 
+        [DisplayName("Tổng tín chỉ")]
         public int? TongTC { get; set; }
 
         [StringLength(50)]
         public string Password { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayName("Ngày sinh")]
         public DateTime? NgaySinh { get; set; }
 
+        [DisplayName("Nữ")]
         public bool GioiTinh { get; set; }
 
+        [DisplayName("Loại người dùng")]
         public int? IdUT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

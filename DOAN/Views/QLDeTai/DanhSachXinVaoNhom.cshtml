@@ -7,6 +7,7 @@
     var XinVaoNhom = ViewBag.XinVaoNhom as IEnumerable<XINVAONHOM>;
     var SinhVienDeTai = ViewBag.SinhVienDeTai as IEnumerable<SINHVIEN_DETAI>;
     bool kq = ViewBag.KQ;
+    int count = 0;
 }
 
 
@@ -49,12 +50,41 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                @if (ViewBag.Error == 1)
+                {
+                <div class="alert alert-warning ">
+                    Đề tài này đã đủ số lượng người
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                }
+                else if (ViewBag.Error == 2)
+                {
+                    <div class="alert alert-warning">
+                        Quá trình thực hiện thất bại
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (ViewBag.Error == -1)
+                {
+                    <div class="alert alert-success">
+                        Quá trình thực hiện thành công
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
                 @if (kq == true)
                 {
                     foreach (var item in Model)
                     {
+
                         if (XinVaoNhom.Count(x => x.DeTai == item.IdDeTai) > 0 && SinhVienDeTai.Count(x => x.DeTai == item.IdDeTai) < item.SoLuongSV)
                         {
+                           
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">@item.TenDeTai</h3>
@@ -95,7 +125,7 @@
                                                             {
                                                                 <tr id="row1_@p.NguoiGui">
                                                                     <td><span>@i</span></td>
-                                                                    @{ i++;}
+                                                                    @{ i++; count++;}
                                                                     <td>
                                                                         @Html.DisplayFor(modelItem => p.NGUOIDUNG.Name)
                                                                     </td>
@@ -130,17 +160,28 @@
                             </div>
                             <!-- /.card -->
                         }
+
                     }
-                 }
-                 else
-                 { 
+                    if (count == 0)
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Thông báo</h3>
+                            </div>
+                            <div class="alert alert-warning ml-1 mr-1 mt-2">Nhóm đã đủ thành viên</div>
+                        </div>
+                    }
+
+                }
+                else
+                {
                     <div class="card">
                         <div class="card-header">
-                             <h3 class="card-title">Thông báo</h3>
+                            <h3 class="card-title">Thông báo</h3>
                         </div>
                         <div class="alert alert-warning ml-1 mr-1 mt-2">Không có yêu cầu xin vào nhóm</div>
                     </div>
-                 }
+                }
 
 
             </div>

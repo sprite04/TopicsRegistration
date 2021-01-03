@@ -35,10 +35,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="@Url.Action("Index","Home")" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Contact</a>
+                    <a href="@Url.Action("Index","Home")" class="nav-link">Trang chủ</a>
                 </li>
             </ul>
 
@@ -157,14 +154,18 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","QLLop")" class="nav-link">
-                                <i class="nav-icon fa fa-users"></i>
-                                <p>
-                                    Lớp
-                                </p>
-                            </a>
-                        </li>
+                        @if (user != null && user.IdUT == 5)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","QLLop")" class="nav-link">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Lớp
+                                    </p>
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a href="@Url.Action("LoaiDeTaiTheoNienKhoa","QLDeTai")" class="nav-link">
                                 <i class="nav-icon fa fa-users"></i>
@@ -173,59 +174,70 @@
                                 </p>
                             </a>
                         </li>
+                        @if (user != null && user.IdUT > 1)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("LoaiDeTaiTheoNienKhoaCuaTungGV","QLDeTai")" class="nav-link">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Quản lí đề tài
+                                    </p>
+                                </a>
+                            </li>
+                        }
 
-                        <li class="nav-item">
-                            <a href="@Url.Action("LoaiDeTaiTheoNienKhoaCuaTungGV","QLDeTai")" class="nav-link">
-                                <i class="nav-icon fa fa-users"></i>
-                                <p>
-                                    Đề tài của cá nhân
-                                </p>
-                            </a>
-                        </li>
+                        @if (user != null && user.IdUT > 2)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("DanhSachDeTaiCanDuocDuyet","QLDeTai")" class="nav-link">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Đề tài cần được duyệt
+                                    </p>
+                                </a>
+                            </li>
+                        }
 
-                        <li class="nav-item">
-                            <a href="@Url.Action("DanhSachDeTaiCanDuocDuyet","QLDeTai")" class="nav-link">
-                                <i class="nav-icon fa fa-users"></i>
-                                <p>
-                                    Đề tài cần được duyệt
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa fa-object-group"></i>
-                                <p>
-                                    Quản lý nhóm
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("DanhSachXinVaoNhom","QLDeTai")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>
-                                            Yêu cầu vào nhóm
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("NhomDeTai","QLDeTai")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>
-                                            Nhóm đề tài
-                                        </p>
-                                    </a>
-                                </li>
-                            </ul>
+                        @if (user != null && user.IdUT == 1)
+                        {
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fa fa-object-group"></i>
+                                    <p>
+                                        Quản lý nhóm
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview" style="display: none;">
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("DanhSachXinVaoNhom","QLDeTai")" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>
+                                                Yêu cầu vào nhóm
+                                            </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("NhomDeTai","QLDeTai")" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>
+                                                Nhóm đề tài
+                                            </p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </li>
                             <li class="nav-item">
                                 <a href="@Url.Action("DeTaiSinhVien","QLDeTai")" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>
-                                        Quản lý đề tài cá nhân
+                                        Nộp báo cáo
                                     </p>
                                 </a>
                             </li>
-                        </li>
+                        }
+
 
 
 

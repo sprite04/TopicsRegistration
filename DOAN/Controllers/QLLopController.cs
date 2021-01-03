@@ -9,7 +9,7 @@ using DOAN.Models;
 
 namespace WEB.Controllers
 {
-    [Authorize(Roles = "quanlylophoc,xemdslophoc,*")]
+    [Authorize(Roles = "xemdslophoc,*")]
     public class QLLopController : Controller
     {
         WEBDbContext db = new WEBDbContext();
@@ -20,7 +20,7 @@ namespace WEB.Controllers
             return View(list);
         }
 
-        [Authorize(Roles = "quanlylophoc,*")]
+        [Authorize(Roles = "*")]
         public ActionResult Create()
         {
             ViewBag.NienKhoa = new SelectList(db.NIENKHOAs,"IdNK","TenNK");
@@ -46,7 +46,7 @@ namespace WEB.Controllers
             }
         }
 
-        [Authorize(Roles = "quanlylophoc,*")]
+        [Authorize(Roles = "*")]
         public ActionResult Edit(int id)
         {
             LOP lop = db.LOPs.Find(id);

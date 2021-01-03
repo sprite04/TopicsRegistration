@@ -13,7 +13,7 @@ using Excel=Microsoft.Office.Interop.Excel;
 
 namespace DOAN.Controllers
 {
-    [Authorize(Roles = "*,quanlysinhvien,quanlygiangvien,xemdsgiangvien,xemdssinhvien")]
+    [Authorize(Roles = "*,xemdsgiangvien,xemdssinhvien")]
     public class QLNguoiDungController : Controller
     {
         WEBDbContext db = new WEBDbContext();
@@ -33,6 +33,7 @@ namespace DOAN.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "*")]
         public ActionResult Import(HttpPostedFileBase excelfile)
         {
             int error = 0;

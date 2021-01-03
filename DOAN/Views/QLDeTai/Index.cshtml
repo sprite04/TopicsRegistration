@@ -8,7 +8,8 @@
     var user = Session["TaiKhoan"] as NGUOIDUNG;
     var listSVDT = ViewBag.SVDT as IEnumerable<SINHVIEN_DETAI>;
     var listXVN = ViewBag.XinVaoNhom as IEnumerable<XINVAONHOM>;
-
+    var cauhinh = ViewBag.CauHinh as CAUHINH;
+    var danhsach = ViewBag.DanhSach as IEnumerable<DETAI>;
 }
 
 
@@ -24,7 +25,8 @@
     </div>
 }
 
-@section script{
+@section script
+{
     <script>
         $(function () {
             $("#example1").DataTable({
@@ -46,22 +48,37 @@
     </script>
 }
 
-<!-- Main content -->
+
+
 
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            @Url.Content(cauhinh.LOAIDETAI.TenLoai + " | " + cauhinh.NIENKHOA1.TenNK + " (" + cauhinh.NIENKHOA1.NamBD + "-" + cauhinh.NIENKHOA1.NamKT + ") " + " | Học kỳ " + cauhinh.HocKy + " (" + cauhinh.NamHocBatDauHocKy + "-" + cauhinh.NamHocKetThucHocKy + ") ")
+                        </h3>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @using (Html.BeginForm("Index", "QLDeTai", new { id = cauhinh.IdCauHinh }, FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
 
-
-                @foreach (var cn in list)
-                {
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">@cn.TenCNganh</h3>
+                                        <div class="form-group">
+                                            @Html.DropDownList("ddlChuyenNganh", ViewBag.items as SelectList, "Tất cả các chuyên ngành", new { @class = "form-control", @onchange = "this.form.submit();" })
+                                        </div>
+                                    }
+                                </div>
+                                <div class="text-center col-sm-12"><span class="badge badge-pill badge-info">@Url.Content("Tổng số đề tài :  " + danhsach.Count())</span></div>
+                            </div>
                         </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
+                        @if (danhsach.Count() > 0)
+                        {
                             <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -71,65 +88,60 @@
                                                     <th>@Html.DisplayNameFor(model => model.TenDeTai)</th>
                                                     <th>@Html.DisplayNameFor(model => model.GVHuongDan)</th>
                                                     <th></th>
-                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-                                                    if (item.ChuyenNganh == cn.IdCNganh)
-                                                    {
-                                                        <tr id="row1_@item.IdDeTai">
-                                                            <td>
+                                                    <tr id="row1_@item.IdDeTai">
+                                                        <td>
+                                                            <a href="@Url.Action("ChiTiet","QLDeTai",new { id=item.IdDeTai})">
                                                                 @Html.DisplayFor(modelItem => item.TenDeTai)
-                                                            </td>
-                                                            <td>
-                                                                @Html.DisplayFor(modelItem => item.NGUOIDUNG.Name)
-                                                            </td>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.NGUOIDUNG.Name)
+                                                        </td>
+                                                        @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == item.IdDeTai) < item.SoLuongSV && listSVDT.Count(y => y.DETAI1.CauHinh == item.CauHinh && y.SinhVien == user.IdUser) == 0 && (item.DuocDKKhacCN == true || item.ChuyenNganh == user.ChuyenNganh))
+                                                        {
                                                             <td>
                                                                 <div class="btn-group btn-group-sm">
-                                                                    <a class="btn btn-info" href="@Url.Action("ChiTiet","QLDeTai",new { id=item.IdDeTai})">
-                                                                        <i class="fa fa-eye"></i>
-                                                                    </a>
+                                                                    @if (item.TruongNhom == null)
+                                                                    {
+                                                                        <a class="btn btn-success" href="@Url.Action("DangKyDeTai","QLDeTai",new { id=item.IdDeTai, strURL=Request.Url.ToString()})">
+                                                                            <i class="fas fa-pencil-alt"></i>
+                                                                        </a>
+                                                                    }
+                                                                    else if (listXVN.Count(x => x.DeTai == item.IdDeTai) < item.SoLuongSV && listXVN.Count(x => x.DeTai == item.IdDeTai && x.NguoiGui == user.IdUser) == 0)
+                                                                    {
+                                                                        <a class="btn btn-danger" href="@Url.Action("XinVaoNhom","QLDeTai",new { id=item.IdDeTai,strURL=Request.Url.ToString()})">
+                                                                            <i class="fas fa-pencil-alt"></i>
+                                                                        </a>
+                                                                    }
                                                                 </div>
                                                             </td>
-                                                            @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == item.IdDeTai) < item.SoLuongSV && listSVDT.Count(y => y.DeTai == item.IdDeTai && y.SinhVien == user.IdUser) == 0 && (item.DuocDKKhacCN==true || item.ChuyenNganh==user.ChuyenNganh))
-                                                            {
-                                                                <td>
-                                                                    <div class="btn-group btn-group-sm">
-                                                                        @if (item.TruongNhom == null)
-                                                                        {
-                                                                            <a class="btn btn-success" href="@Url.Action("DangKyDeTai","QLDeTai",new { id=item.IdDeTai, strURL=Request.Url.ToString()})">
-                                                                                <i class="fas fa-pencil-alt"></i>
-                                                                            </a>
-                                                                        }
-                                                                        else if(listXVN.Count(x => x.DeTai == item.IdDeTai) < item.SoLuongSV && listXVN.Count(x => x.DeTai == item.IdDeTai && x.NguoiGui == user.IdUser) == 0)
-                                                                        {
-                                                                            <a class="btn btn-danger" href="@Url.Action("XinVaoNhom","QLDeTai",new { id=item.IdDeTai,strURL=Request.Url.ToString()})">
-                                                                                <i class="fas fa-pencil-alt"></i>
-                                                                            </a>
-                                                                        }
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                        </tr>
-                                                    }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                    </tr>
                                                 }
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
+
                             </div>
-                        </div>
-                        <!-- /.card-body -->
+                        }
+
                     </div>
-                    <!-- /.card -->
+                </div>
 
-                }
             </div>
 
-                <!-- /.col -->
-            </div>
+            <!-- /.col -->
+        </div>
         <!-- /.row -->
     </div>
     <!-- /.container-fluid -->
