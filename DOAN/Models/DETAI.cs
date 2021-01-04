@@ -54,7 +54,7 @@
         [DisplayName("Trưởng nhóm")]
         public int? TruongNhom { get; set; }
 
-     
+        [DisplayName("Cấu hình")]
         public int ? CauHinh { get; set; }
 
         public bool? IsDelete { get; set; }

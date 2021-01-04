@@ -5,6 +5,7 @@
     ViewBag.Title = "ChiTietNguoiDung";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
     string anhcu = ViewBag.AnhCu;
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
 }
 
 
@@ -15,9 +16,7 @@
             if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
             }
-
         }
-
     </script>
 
 }
@@ -146,9 +145,12 @@
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
                             <li class="nav-item float-right"><a class="nav-link active" href="#activity" data-toggle="tab">Thông tin</a></li>
+                            @if (user != null && user.IdUser == Model.IdUser)
+                            {
+                                <li class="nav-item float-right"><a class="nav-link" href="#settings" data-toggle="tab">Cập nhật</a></li>
+                                <li class="nav-item float-right"><a class="nav-link" href="#changepassword" data-toggle="tab">Đổi mật khẩu</a></li>
+                            }
 
-                            <li class="nav-item float-right"><a class="nav-link" href="#settings" data-toggle="tab">Cập nhật</a></li>
-                            <li class="nav-item float-right"><a class="nav-link" href="#changepassword" data-toggle="tab">Đổi mật khẩu</a></li>
                         </ul>
                     </div><!-- /.card-header -->
                     <div class="card-body p-0 m-0">
@@ -233,99 +235,103 @@
                                 </div>
                             </div>
                             <!-- /.tab-pane -->
+                            @if (user != null && user.IdUser == Model.IdUser)
+                            {
+                                <div class="tab-pane pl-4 pt-2 pb-2 pr-4 m-2" id="settings">
+                                    @using (Html.BeginForm("CapNhatThongTin", "QLNguoiDung", new { AnhCu = anhcu }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.HiddenFor(model => model.IdUser)
+                                        @Html.HiddenFor(model => model.Block)
+                                        @Html.HiddenFor(model => model.IdUT)
+                                        @Html.HiddenFor(model => model.RegisterDate)
+                                        @Html.HiddenFor(model => model.LastVisitDate)
+                                        @Html.HiddenFor(model => model.HocVi)
+                                        @Html.HiddenFor(model => model.ChucVu)
+                                        @Html.HiddenFor(model => model.Password)
+                                        @Html.HiddenFor(model => model.Name)
+                                        @Html.HiddenFor(model => model.ChuyenNganh)
+                                        @Html.HiddenFor(model => model.Lop)
+                                        @Html.HiddenFor(model => model.Diem)
+                                        @Html.HiddenFor(model => model.TongTC)
+                                        @Html.HiddenFor(model => model.Username)
+                                        <div class="form-group row">
+                                            <label for="inputName" class="col-sm-2 col-form-label">Avatar</label>
+                                            <div class="col-sm-10">
+                                                @Html.LabelFor(model => model.Avatar, "Choose File", new { @for = "Avatar", @class = "custom-file-label" })
+                                                <input class="custom-file-input" type="file" name="Avatar" id="Avatar" onchange="fileCheck(this);" />
+                                                @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputName" class="col-sm-2 col-form-label">Nữ</label>
+                                            <div class="col-sm-10">
+                                                @Html.EditorFor(model => model.GioiTinh)
+                                                @Html.ValidationMessageFor(model => model.GioiTinh, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputEmail" class="col-sm-2 col-form-label">Ngày sinh</label>
+                                            <div class="col-sm-10">
+                                                @Html.TextBoxFor(model => model.NgaySinh, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control", @id = "inputBD" })
+                                                @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputEmail" class="col-sm-2 col-form-label">Điện thoại</label>
+                                            <div class="col-sm-10">
+                                                @Html.TextBoxFor(model => model.Phone, new { @type = "text", @class = "form-control", @id = "inputPhone", @placeholder = "Phone Number" })
+                                                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputName2" class="col-sm-2 col-form-label">Email</label>
+                                            <div class="col-sm-10">
+                                                @Html.TextBoxFor(model => model.Email, new { @type = "text", @class = "form-control", @id = "inputMail", @placeholder = "Mail" })
+                                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="offset-sm-2 col-sm-10">
+                                                <button type="submit" class="btn btn-danger float-right">Lưu</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="tab-pane pl-4 pt-2 pb-2 pr-4 m-2" id="changepassword">
+                                    @using (Html.BeginForm("ThayDoiMatKhau", "QLNguoiDung", FormMethod.Post))
+                                    {
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">Mật khẩu</label>
+                                            <div class="col-sm-9">
+                                                <input name="matkhaucu" type="password" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">Mật khẩu mới</label>
+                                            <div class="col-sm-9">
+                                                <input name="matkhaumoi" type="password" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label">Nhập lại mật khẩu</label>
+                                            <div class="col-sm-9">
+                                                <input name="xacnhan" type="password" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="offset-sm-2 col-sm-10">
+                                                <button type="submit" class="btn btn-danger float-right">Lưu</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
                             <!-- /.tab-content -->
-                            <div class="tab-pane pl-4 pt-2 pb-2 pr-4 m-2" id="settings">
-                                @using (Html.BeginForm("CapNhatThongTin", "QLNguoiDung", new { AnhCu = anhcu }, FormMethod.Post, new { enctype = "multipart/form-data" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    @Html.HiddenFor(model => model.IdUser)
-                                    @Html.HiddenFor(model => model.Block)
-                                    @Html.HiddenFor(model => model.IdUT)
-                                    @Html.HiddenFor(model => model.RegisterDate)
-                                    @Html.HiddenFor(model => model.LastVisitDate)
-                                    @Html.HiddenFor(model => model.HocVi)
-                                    @Html.HiddenFor(model => model.ChucVu)
-                                    @Html.HiddenFor(model => model.Password)
-                                    @Html.HiddenFor(model => model.Name)
-                                    @Html.HiddenFor(model => model.ChuyenNganh)
-                                    @Html.HiddenFor(model => model.Lop)
-                                    @Html.HiddenFor(model => model.Diem)
-                                    @Html.HiddenFor(model => model.TongTC)
-                                    @Html.HiddenFor(model => model.Username)
-                                    <div class="form-group row">
-                                        <label for="inputName" class="col-sm-2 col-form-label">Avatar</label>
-                                        <div class="col-sm-10">
-                                            @Html.LabelFor(model => model.Avatar, "Choose File", new { @for = "Avatar", @class = "custom-file-label" })
-                                            <input class="custom-file-input" type="file" name="Avatar" id="Avatar" onchange="fileCheck(this);" />
-                                            @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="inputName" class="col-sm-2 col-form-label">Nữ</label>
-                                        <div class="col-sm-10">
-                                            @Html.EditorFor(model => model.GioiTinh)
-                                            @Html.ValidationMessageFor(model => model.GioiTinh, "", new { @class = "text-danger" })
 
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="inputEmail" class="col-sm-2 col-form-label">Ngày sinh</label>
-                                        <div class="col-sm-10">
-                                            @Html.TextBoxFor(model => model.NgaySinh, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control", @id = "inputBD" })
-                                            @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="inputEmail" class="col-sm-2 col-form-label">Điện thoại</label>
-                                        <div class="col-sm-10">
-                                            @Html.TextBoxFor(model => model.Phone, new { @type = "text", @class = "form-control", @id = "inputPhone", @placeholder = "Phone Number" })
-                                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="inputName2" class="col-sm-2 col-form-label">Email</label>
-                                        <div class="col-sm-10">
-                                            @Html.TextBoxFor(model => model.Email, new { @type = "text", @class = "form-control", @id = "inputMail", @placeholder = "Mail" })
-                                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <div class="offset-sm-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger float-right">Lưu</button>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                            <div class="tab-pane pl-4 pt-2 pb-2 pr-4 m-2" id="changepassword">
-                                @using (Html.BeginForm("ThayDoiMatKhau", "QLNguoiDung", FormMethod.Post))
-                                {
-
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Mật khẩu</label>
-                                        <div class="col-sm-9">
-                                            <input name="matkhaucu" type="password" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Mật khẩu mới</label>
-                                        <div class="col-sm-9">
-                                            <input name="matkhaumoi" type="password" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label  class="col-sm-3 col-form-label">Nhập lại mật khẩu</label>
-                                        <div class="col-sm-9">
-                                            <input name="xacnhan" type="password" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="offset-sm-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger float-right">Lưu</button>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
                         </div>
 
                     </div><!-- /.card-body -->

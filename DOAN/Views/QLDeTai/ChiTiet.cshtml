@@ -162,15 +162,37 @@
                                                 @Html.DisplayNameFor(model => model.TruongNhom)
                                             </th>
                                             <td>
-                                                @Html.DisplayFor(model => model.NGUOIDUNG1.Name)
+                                                <a href="@Url.Action("ChiTietNguoiDung","QLNguoiDung",new { id=Model.NGUOIDUNG1.IdUT})">
+                                                    @Html.DisplayFor(model => model.NGUOIDUNG1.Name)
+                                                </a>
                                             </td>
                                         </tr>
+                                        @if (Model.TruongNhom != null)
+                                        {
+                                            foreach (var tv in listSVDT.Where(x => x.SinhVien != Model.TruongNhom && x.DeTai==Model.IdDeTai))
+                                            {
+                                                <tr>
+                                                    <th>
+                                                        <span>Thành viên</span>
+                                                    </th>
+                                                    <td>
+                                                        <a href="@Url.Action("ChiTietNguoiDung","QLNguoiDung",new { id=tv.NGUOIDUNG.IdUser})">
+                                                            <span>@tv.NGUOIDUNG.Name</span>
+                                                        </a>
+                                                            
+                                                    </td>
+                                                </tr>
+                                                
+                                            }
+                                        }
                                         <tr>
                                             <th>
                                                 @Html.DisplayNameFor(model => model.GVHuongDan)
                                             </th>
                                             <td>
-                                                @Html.DisplayFor(model => model.NGUOIDUNG.Name)
+                                                <a href="@Url.Action("ChiTietNguoiDung","QLNguoiDung",new { id=Model.GVHuongDan})">
+                                                    @Html.DisplayFor(model => model.NGUOIDUNG.Name)
+                                                </a>
                                             </td>
                                         </tr>
                                         @if (user.IdUT == 1)
@@ -180,7 +202,7 @@
                                                     <span>Đăng ký</span>
                                                 </th>
                                                 <td>
-                                                    @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DETAI1.CauHinh == Model.CauHinh && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh)&& (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDK ?? DateTime.Now) <= 0))
+                                                    @if (user != null && user.ChucVu == 1 && listSVDT.Count(x => x.DeTai == Model.IdDeTai) < Model.SoLuongSV && listSVDT.Count(y => y.DETAI1.CauHinh == Model.CauHinh && y.SinhVien == user.IdUser) == 0 && (Model.DuocDKKhacCN == true || Model.ChuyenNganh == user.ChuyenNganh) && (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDK ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDK ?? DateTime.Now) <= 0))
                                                     {
                                                         <div class="btn-group btn-group-sm">
                                                             @if (Model.TruongNhom == null)
@@ -200,7 +222,7 @@
                                                 </td>
                                             </tr>
                                         }
-                                        else if((user.IdUT > 3 || (user.IdUT == 3 && user.ChuyenNganh == Model.ChuyenNganh))&&Model.IsDuyet==false && (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDuyet ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDuyet ?? DateTime.Now) <= 0))
+                                        else if ((user.IdUT > 3 || (user.IdUT == 3 && user.ChuyenNganh == Model.ChuyenNganh)) && Model.IsDuyet == false && (DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianBatDauDuyet ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, Model.CAUHINH1.ThoiGianKetThucDuyet ?? DateTime.Now) <= 0))
                                         {
                                             <tr>
                                                 <th>

@@ -171,7 +171,9 @@
                                                             @Html.DisplayFor(modelItem => item.Username)
                                                         </td>
                                                         <td>
-                                                            @Html.DisplayFor(modelItem => item.Name)
+                                                            <a href="@Url.Action("ChiTietNguoiDung","QLNguoiDung",new { id=item.IdUser})">
+                                                                @Html.DisplayFor(modelItem => item.Name)
+                                                            </a>
                                                         </td>
                                                         <td>
                                                             @Html.DisplayFor(modelItem => item.Phone)

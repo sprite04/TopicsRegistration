@@ -87,7 +87,10 @@
                                                 <tr>
                                                     <th>@Html.DisplayNameFor(model => model.TenDeTai)</th>
                                                     <th>@Html.DisplayNameFor(model => model.GVHuongDan)</th>
-                                                    <th></th>
+                                                    @if (user != null && (user.IdUT == 1 || user.IdUT == 5))
+                                                    {
+                                                        <th></th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -121,7 +124,19 @@
                                                                 </div>
                                                             </td>
                                                         }
-                                                        else
+                                                        else if(user!=null && user.IdUT==5)
+                                                        {
+                                                            <td>
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <a class="btn btn-info" href="@Url.Action("SuaDeTai","QLDeTai",new { id=item.IdDeTai})">
+                                                                        <i class="fas fa-pencil-alt"></i>
+                                                                    </a>
+                                                                    @Ajax.ActionLink(" ", "XoaDeTai", "QLDeTai", new { id = item.IdDeTai }, new AjaxOptions { Confirm = "Bạn có muốn xoá đề tài này?", OnComplete = "$('#row1_" + @item.IdDeTai + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-danger DeleteId" })
+
+                                                                </div>
+                                                            </td>
+                                                        }
+                                                        else if(user != null && user.ChucVu == 1)
                                                         {
                                                             <td></td>
                                                         }
@@ -133,7 +148,7 @@
                                 </div>
 
                             </div>
-                        }
+                                                }
 
                     </div>
                 </div>

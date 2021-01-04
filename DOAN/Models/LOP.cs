@@ -1,7 +1,8 @@
-namespace DOAN.Models
+﻿namespace DOAN.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
@@ -19,6 +20,7 @@ namespace DOAN.Models
         public int IdLop { get; set; }
 
         [StringLength(50)]
+        [DisplayName("Tên lớp")]
         public string TenLop { get; set; }
 
         public int? IdNK { get; set; }

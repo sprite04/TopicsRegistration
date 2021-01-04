@@ -28,11 +28,12 @@ namespace DOAN.Controllers
             ViewBag.ChuyenNganh = db.CHUYENNGANHs;
             ViewBag.SVDT = db.SINHVIEN_DETAI;
             ViewBag.XinVaoNhom = db.XINVAONHOMs;
+            Session["Link"] = Request.Url.ToString();
 
-            var listCN = db.CHUYENNGANHs;
+
 
             var list = db.DETAIs.Where(x => x.IsDuyet == true && x.CauHinh == cauhinh.IdCauHinh);
-
+            var listCN = db.CHUYENNGANHs;
             ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh");
             ViewBag.GiaTri = 0;
             ViewBag.DanhSach = list;
@@ -47,8 +48,8 @@ namespace DOAN.Controllers
             CAUHINH cauhinh = db.CAUHINHs.SingleOrDefault(x => x.IdCauHinh == id);
             if (cauhinh == null)
                 return HttpNotFound();
+            Session["Link"] = Request.Url.ToString();
 
-            
             ViewBag.ChuyenNganh = db.CHUYENNGANHs;
             ViewBag.SVDT = db.SINHVIEN_DETAI;
             ViewBag.XinVaoNhom = db.XINVAONHOMs;
@@ -351,9 +352,6 @@ namespace DOAN.Controllers
             if (user == null)
                 return RedirectToAction("DangNhap", "Home");
 
-            
-
-
             if (db.XINVAONHOMs.Count(x=>x.DeTai==detai.IdDeTai)<detai.SoLuongSV && db.XINVAONHOMs.Count(x=>x.DeTai==detai.IdDeTai&&x.NguoiGui==user.IdUser)==0)
             {
                 XINVAONHOM xvn = new XINVAONHOM();
@@ -455,9 +453,10 @@ namespace DOAN.Controllers
             {
                 try
                 {
+                    int error = -1;
                     db.DETAIs.Add(detai);
                     db.SaveChanges();
-                    return RedirectToAction("DanhSachDeTaiCuaTungGV");
+                    return RedirectToAction("DanhSachDeTaiCuaTungGV","QLDeTai",new { id=detai.CauHinh, error=error});
                 }
                 catch (Exception)
                 {
@@ -516,12 +515,13 @@ namespace DOAN.Controllers
             {
                 try
                 {
+                    int error = -1;
                     db.Entry(detai).State = EntityState.Modified;
                     db.SaveChanges();
                     if (strURL != null)
                         return Redirect(strURL);
                     else
-                        return RedirectToAction("DanhSachDeTaiCuaTungGV");
+                        return RedirectToAction("DanhSachDeTaiCuaTungGV","QLDeTai",new { id=detai.CauHinh, error=error});
                 }
                 catch (Exception)
                 {
@@ -552,10 +552,11 @@ namespace DOAN.Controllers
                 return HttpNotFound();
             try
             {
+                int error = -1;
                 detai.IsDelete = true;
                 db.Entry(detai).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("DanhSachDeTaiCuaTungGV");
+                return RedirectToAction("DanhSachDeTaiCuaTungGV","QLDeTai",new { id=detai.CauHinh, error=error});
 
             }
             catch (Exception ex)
@@ -572,8 +573,48 @@ namespace DOAN.Controllers
             if (nguoidung == null)
                 return HttpNotFound();
             ViewBag.ChuyenNganh = db.CHUYENNGANHs;
+
             var list = db.DETAIs.Where(x => x.TrangThai!=1 && x.IsDelete == false && x.IsDuyet == false && (DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianBatDauDuyet ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianKetThucDuyet ?? DateTime.Now) <= 0)&&(nguoidung.IdUT > 3 || (nguoidung.IdUT == 3 && nguoidung.ChuyenNganh == x.ChuyenNganh)));
+            var listCN = db.CHUYENNGANHs;
+            ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh");
+            ViewBag.GiaTri = 0;
+            ViewBag.DanhSach = list;
+
             return View(list);
+        }
+
+
+        [Authorize(Roles = "*,duyetdetai")]
+        [HttpPost]
+        public ActionResult DanhSachDeTaiCanDuocDuyet(FormCollection f)
+        {
+            var kq = f["ddlChuyenNganh"];
+
+            NGUOIDUNG nguoidung = Session["TaiKhoan"] as NGUOIDUNG;
+            if (nguoidung == null)
+                return HttpNotFound();
+            ViewBag.ChuyenNganh = db.CHUYENNGANHs;
+
+            var listCN = db.CHUYENNGANHs;
+
+            if (kq != "")
+            {
+                int giatri = int.Parse(kq);
+                var list = db.DETAIs.Where(x => x.TrangThai != 1 && x.IsDelete == false && x.IsDuyet == false && (DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianBatDauDuyet ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianKetThucDuyet ?? DateTime.Now) <= 0) && (nguoidung.IdUT > 3 || (nguoidung.IdUT == 3 && nguoidung.ChuyenNganh == x.ChuyenNganh)) && x.ChuyenNganh == giatri);
+
+                ViewBag.DanhSach = list;
+                ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh", giatri);
+                ViewBag.GiaTri = giatri;
+                return View(list);
+            }
+            else
+            {
+                var list = db.DETAIs.Where(x => x.TrangThai != 1 && x.IsDelete == false && x.IsDuyet == false && (DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianBatDauDuyet ?? DateTime.Now) >= 0 && DateTime.Compare(DateTime.Now, x.CAUHINH1.ThoiGianKetThucDuyet ?? DateTime.Now) <= 0) && (nguoidung.IdUT > 3 || (nguoidung.IdUT == 3 && nguoidung.ChuyenNganh == x.ChuyenNganh)));
+                ViewBag.DanhSach = list;
+                ViewBag.items = new SelectList(listCN, "IdCNganh", "TenCNganh");
+                ViewBag.GiaTri = 0;
+                return View(list);
+            }
         }
 
         [Authorize(Roles = "*,duyetdetai")]

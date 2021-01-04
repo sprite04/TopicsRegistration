@@ -265,7 +265,7 @@ namespace DOAN.Controllers
         }
 
 
-        [Authorize(Roles = "*,quanlysinhvien")]
+        [Authorize(Roles = "*")]
         public ActionResult Edit(int id)
         {
             NGUOIDUNG nd = db.NGUOIDUNGs.SingleOrDefault(x => x.IdUser == id);
@@ -279,63 +279,8 @@ namespace DOAN.Controllers
         }
 
         [HttpPost]
-        public ActionResult CapNhatThongTin(NGUOIDUNG nd, HttpPostedFileBase Avatar, string AnhCu)
-        {
-            if (Avatar != null)
-            {
-                if (Avatar.ContentLength > 0)
-                {
-                    var fileName = Path.GetFileName(Avatar.FileName);
-                    var path = Path.Combine(Server.MapPath("~/assets/avatar"), fileName);
-                    nd.Avatar = fileName;
-                    if (!System.IO.File.Exists(path))
-                    {
-                        Avatar.SaveAs(path);
-                    }
-                }
-            }
-            else
-                nd.Avatar = AnhCu;
-
-            int error = 0;
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    db.Entry(nd).State = EntityState.Modified;
-                    try
-                    {
-                        db.SaveChanges();
-                        
-                        error = -1;
-                        return RedirectToAction("ChiTietNguoiDung",new { error=error});
-                    }
-                    catch (Exception)
-                    {
-                        error = 1;
-                        return RedirectToAction("ChiTietNguoiDung", new { error = error });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    string message = ex.Message;
-                    error = 1;
-                    return RedirectToAction("ChiTietNguoiDung", new { error = error });
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin đã nhập.");
-                ViewBag.ChuyenNganh = new SelectList(db.CHUYENNGANHs, "IdCNganh", "TenCNganh", nd.ChuyenNganh);
-                ViewBag.Lop = new SelectList(db.LOPs, "IdLop", "TenLop", nd.Lop);
-            }
-            return View(nd);
-        }
-
-
-        [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = "*")]
         public ActionResult Edit(NGUOIDUNG nd, HttpPostedFileBase Avatar, string AnhCu)
         {
             if (Avatar != null)
@@ -354,7 +299,7 @@ namespace DOAN.Controllers
             else
                 nd.Avatar = AnhCu;
 
-            
+
 
             if (ModelState.IsValid)
             {
@@ -386,7 +331,7 @@ namespace DOAN.Controllers
             return View(nd);
         }
 
-        [Authorize(Roles = "*,quanlygiangvien")]
+        [Authorize(Roles = "*")]
         public ActionResult EditGV(int id)
         {
             NGUOIDUNG nd = db.NGUOIDUNGs.Find(id);
@@ -400,11 +345,10 @@ namespace DOAN.Controllers
             return View(nd);
         }
 
-        // POST: NGUOIDUNGs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = "*")]
         public ActionResult EditGV(NGUOIDUNG nd, HttpPostedFileBase Avatar, string AnhCu, FormCollection f)
         {
             if (Avatar != null)
@@ -453,6 +397,78 @@ namespace DOAN.Controllers
         }
 
 
+
+        [HttpPost]
+        public ActionResult CapNhatThongTin(NGUOIDUNG nd, HttpPostedFileBase Avatar, string AnhCu)
+        {
+            var user = Session["TaiKhoan"] as NGUOIDUNG;
+            if(user==null)
+            {
+                RedirectToAction("DangNhap","Home");
+            }
+            if(user.IdUT==5||(user.IdUser==nd.IdUser))
+            {
+                if (Avatar != null)
+                {
+                    if (Avatar.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(Avatar.FileName);
+                        var path = Path.Combine(Server.MapPath("~/assets/avatar"), fileName);
+                        nd.Avatar = fileName;
+                        if (!System.IO.File.Exists(path))
+                        {
+                            Avatar.SaveAs(path);
+                        }
+                    }
+                }
+                else
+                    nd.Avatar = AnhCu;
+
+                int error = 0;
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        db.Entry(nd).State = EntityState.Modified;
+                        try
+                        {
+                            db.SaveChanges();
+
+                            error = -1;
+                            return RedirectToAction("ChiTietNguoiDung", new { error = error });
+                        }
+                        catch (Exception)
+                        {
+                            error = 1;
+                            return RedirectToAction("ChiTietNguoiDung", new { error = error });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = ex.Message;
+                        error = 1;
+                        return RedirectToAction("ChiTietNguoiDung", new { error = error });
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin đã nhập.");
+                    ViewBag.ChuyenNganh = new SelectList(db.CHUYENNGANHs, "IdCNganh", "TenCNganh", nd.ChuyenNganh);
+                    ViewBag.Lop = new SelectList(db.LOPs, "IdLop", "TenLop", nd.Lop);
+                }
+                return View(nd);
+            }
+            else
+            {
+                return View("LoiPhanQuyen", "Home");
+            }
+        }
+
+
+        
+
+
         [Authorize(Roles = "*,quanlygiangvien")]
         public ActionResult Delete(int id)
         {
@@ -481,16 +497,25 @@ namespace DOAN.Controllers
             }
         }
 
-        public ActionResult ChiTietNguoiDung(int error=0)
+        public ActionResult ChiTietNguoiDung(int? id,int error=0)
         {
-            var user = Session["TaiKhoan"] as NGUOIDUNG;
-            if (user == null)
-                return HttpNotFound();
-            var nd = db.NGUOIDUNGs.Find(user.IdUser);
-            Session["TaiKhoan"] = nd;
-            ViewBag.AnhCu = nd.Avatar;
-            ViewBag.Error = error;
-            return View(nd);
+            if(id==null)
+            {
+                var user = Session["TaiKhoan"] as NGUOIDUNG;
+                if (user == null)
+                    return HttpNotFound();
+                var nd = db.NGUOIDUNGs.Find(user.IdUser);
+                Session["TaiKhoan"] = nd;
+                ViewBag.AnhCu = nd.Avatar;
+                ViewBag.Error = error;
+                return View(nd);
+            }    
+            else
+            {
+                var nd = db.NGUOIDUNGs.Find(id);
+                ViewBag.Error = error;
+                return View(nd);
+            }    
         }
 
         public ActionResult ThayDoiMatKhau (FormCollection f)

@@ -37,8 +37,6 @@ namespace DOAN.Controllers
                 ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh");
                 return View();
             }   
-
-                
             else
                 return RedirectToAction("DangNhap");
         }
