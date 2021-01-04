@@ -1,7 +1,8 @@
-namespace DOAN.Models
+﻿namespace DOAN.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
@@ -13,15 +14,18 @@ namespace DOAN.Models
         public int IdTB { get; set; }
 
         [StringLength(200)]
+        [DisplayName("Tiêu đề")]
         public string TenTB { get; set; }
 
         [Column(TypeName = "ntext")]
+        [DisplayName("Nội dung")]
         public string NoiDung { get; set; }
 
         public int? NguoiDang { get; set; }
 
         public DateTime? NgayDang { get; set; }
 
+        [DisplayName("Số ngày hiển thị")]
         public int? SoNgayHienThi { get; set; }
 
         public bool? CoTinMoi { get; set; }

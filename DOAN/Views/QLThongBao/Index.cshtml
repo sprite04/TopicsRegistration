@@ -6,6 +6,7 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
 }
 
 @section style
@@ -88,10 +89,12 @@
     <div class="card ">
         <div class="card-header">
             <h3 class="card-title">Thông báo</h3>
-
-            <a class="btn btn-success float-right" href="@Url.Action("TaoThongBao","QLThongBao")">
-                Tạo thông báo
-            </a>
+            @if (user != null && user.IdUT == 5)
+            {
+                <a class="btn btn-success float-right" href="@Url.Action("TaoThongBao","QLThongBao")">
+                    Tạo thông báo
+                </a>
+            }
         </div>
         <div class="card-body">
             <section class="content">
@@ -104,11 +107,12 @@
                                 @item.NgayDang
                             </span>
                             <a href="@Url.Action("ChiTietThongBao","QLThongBao",new { id=item.IdTB})"><span class="pl-3" style="font-size:18px; line-height:32px">@item.TenTB</span></a>
-
-                            <div class="card-tools">
-                                @Ajax.ActionLink(" ", "XoaThongBao", "QLThongBao", new { id = item.IdTB }, new AjaxOptions { Confirm = "Bạn có muốn xoá người dùng này?", OnComplete = "$('#row1_" + @item.IdTB + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-tool DeleteId",@tittle="Remove"})
-                                
-                            </div>
+                            @if (user != null && user.IdUT == 5)
+                            {
+                                <div class="card-tools">
+                                    @Ajax.ActionLink(" ", "XoaThongBao", "QLThongBao", new { id = item.IdTB }, new AjaxOptions { Confirm = "Bạn có muốn xoá người dùng này?", OnComplete = "$('#row1_" + @item.IdTB + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-tool DeleteId", @tittle = "Remove" })
+                                </div>
+                            }
                         </div>
                     </div>
 

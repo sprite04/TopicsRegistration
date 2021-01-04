@@ -23,6 +23,7 @@
         [DisplayName("Tên lớp")]
         public string TenLop { get; set; }
 
+        [DisplayName("Niên khoá")]
         public int? IdNK { get; set; }
 
         public virtual NIENKHOA NIENKHOA { get; set; }

@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = "ChiTietThongBao";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
 }
 
 <section class="content">
@@ -21,16 +22,25 @@
                                 <span>@Url.Content(Model.NgayDang.ToString())</span>
                             </div>
                             <div class="col-3">
-                                <!-- Button trigger modal -->
-                                <a class="btn btn-info float-right" href="@Url.Action("ChinhSuaThongBao","QLThongBao",new { id=Model.IdTB})">
-                                    Chỉnh sửa
-                                </a>
+                                @if (user != null && user.IdUT == 5)
+                                {
+                                    <!-- Button trigger modal -->
+                                    <a class="btn btn-info float-right" href="@Url.Action("ChinhSuaThongBao","QLThongBao",new { id=Model.IdTB})">
+                                        Chỉnh sửa
+                                    </a>
+                                }
                             </div>
 
                         </div>
                     </div>
                     <div class="card-body">
-                        @Html.Raw(Model.NoiDung)
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                @Html.Raw(Model.NoiDung)
+                            </div>
+                        </div>
+                        
                     </div>
                     <!-- /.card-footer-->
                 </div>

@@ -8,6 +8,7 @@ using PagedList;
 
 namespace DOAN.Controllers
 {
+    [Authorize(Roles = "*,xemthongbao")]
     public class QLThongBaoController : Controller
     {
         // GET: QLThongBao
@@ -23,6 +24,7 @@ namespace DOAN.Controllers
             return View(list.OrderByDescending(x => x.NgayDang).ToPagedList(PageNumber, PageSize));
         }
 
+        [Authorize(Roles = "*")]
         public ActionResult TaoThongBao()
         {
             return View();
@@ -31,6 +33,7 @@ namespace DOAN.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "*")]
         public ActionResult TaoThongBao(THONGBAO thongbao)
         {
             NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
@@ -68,6 +71,7 @@ namespace DOAN.Controllers
             return View(thongbao);
         }
 
+        [Authorize(Roles = "*")]
         public ActionResult ChinhSuaThongBao(int id)
         {
             var thongbao = db.THONGBAOs.Find(id);
@@ -78,6 +82,7 @@ namespace DOAN.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        [Authorize(Roles = "*")]
         public ActionResult ChinhSuaThongBao(THONGBAO thongbao)
         {
             if(ModelState.IsValid)
@@ -100,17 +105,20 @@ namespace DOAN.Controllers
             return View(thongbao);
         }
 
+        [Authorize(Roles = "*")]
         public ActionResult XoaThongBao(int id)
         {
             int error = 0;
             var thongbao = db.THONGBAOs.SingleOrDefault(x => x.IdTB == id);
             if (thongbao == null)
                 return HttpNotFound();
-            db.THONGBAOs.Remove(thongbao);
+            thongbao.IsDelete = true;
+            
             try
             {
-                error = -1;
+                db.Entry(thongbao).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
+                error = -1;
                 return RedirectToAction("Index", "ThongBao", new { error = error });
             }
             catch (Exception)

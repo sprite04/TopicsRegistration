@@ -154,17 +154,7 @@
                                 </li>
                             </ul>
                         </li>
-                        @if (user != null && user.IdUT == 5)
-                        {
-                            <li class="nav-item">
-                                <a href="@Url.Action("Index","QLLop")" class="nav-link">
-                                    <i class="nav-icon fa fa-users"></i>
-                                    <p>
-                                        Lớp
-                                    </p>
-                                </a>
-                            </li>
-                        }
+                        
 
                         <li class="nav-item">
                             <a href="@Url.Action("LoaiDeTaiTheoNienKhoa","QLDeTai")" class="nav-link">
@@ -174,32 +164,12 @@
                                 </p>
                             </a>
                         </li>
-                        @if (user != null && user.IdUT > 1)
-                        {
-                            <li class="nav-item">
-                                <a href="@Url.Action("LoaiDeTaiTheoNienKhoaCuaTungGV","QLDeTai")" class="nav-link">
-                                    <i class="nav-icon fa fa-users"></i>
-                                    <p>
-                                        Quản lí đề tài
-                                    </p>
-                                </a>
-                            </li>
-                        }
 
-                        @if (user != null && user.IdUT > 2)
-                        {
-                            <li class="nav-item">
-                                <a href="@Url.Action("DanhSachDeTaiCanDuocDuyet","QLDeTai")" class="nav-link">
-                                    <i class="nav-icon fa fa-users"></i>
-                                    <p>
-                                        Đề tài cần được duyệt
-                                    </p>
-                                </a>
-                            </li>
-                        }
+
 
                         @if (user != null && user.IdUT == 1)
                         {
+                            <li class="nav-header">SINH VIÊN</li>
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fa fa-object-group"></i>
@@ -237,20 +207,38 @@
                                 </a>
                             </li>
                         }
+                        else if (user != null && user.IdUT > 1)
+                        {
+                            <li class="nav-header">GIẢNG VIÊN</li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","QLLop")" class="nav-link">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Danh sách lớp học
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("LoaiDeTaiTheoNienKhoaCuaTungGV","QLDeTai")" class="nav-link">
+                                    <i class="nav-icon fa fa-list-alt"></i>
+                                    <p>
+                                        Quản lí đề tài
+                                    </p>
+                                </a>
+                            </li>
+                            if (user != null && user.IdUT > 2)
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("DanhSachDeTaiCanDuocDuyet","QLDeTai")" class="nav-link">
+                                        <i class="nav-icon fa fa-users"></i>
+                                        <p>
+                                            Đề tài cần được duyệt
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+                        }
 
-
-
-
-                        <li class="nav-header">EXAMPLES</li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon far fa-calendar-alt"></i>
-                                <p>
-                                    Calendar
-                                    <span class="badge badge-info right">2</span>
-                                </p>
-                            </a>
-                        </li>
 
                     </ul>
                 </nav>

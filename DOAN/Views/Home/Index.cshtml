@@ -92,7 +92,7 @@
         <!-- /.row -->
         <div class="container-fluid m-0 p-0">
             <div class="row">
-                <div class="col-12">
+                <div class="col-6">
                     <div class="card">
                         <div class="card-header ui-sortable-handle" style="cursor: move;">
                             <h3 class="card-title">
@@ -100,14 +100,7 @@
                                 Thống kê
                             </h3>
                             <div class="card-tools">
-                                <ul class="nav nav-pills ml-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
-                                    </li>
-                                </ul>
+                                
                             </div>
                         </div><!-- /.card-header -->
                         <div class="card-body">
@@ -118,9 +111,9 @@
                                         {
                                             @Html.AntiForgeryToken()
 
-                                                <div class="form-group text-center">
-                                                    <label class="col-sm-2 control-label m-0 p-0">Loại đề tài</label>
-                                                    <div class="col-sm-5 d-inline-block">
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label m-0 p-0">Loại đề tài</label>
+                                                    <div class="col-sm-8 d-inline-block">
                                                         @Html.DropDownList("ddlCauHinh", ViewBag.items as SelectList, "Chọn loại đề tài", new { @class = "form-control", @onchange = "this.form.submit();" })
                                                     </div>
                                                 </div>
@@ -129,7 +122,7 @@
                                             {
                                                 <div>
                                                     <div class="chart_container text-center">
-                                                        <canvas id="chartjs-4" class="chartjs mb-5" style="width:470px; height:auto" display: block">
+                                                        <canvas id="chartjs-4" class="chartjs mb-5"  display: block">
                                                         </canvas>
                                                         <script>
                                                         var values =@Html.Raw(Json.Encode(ViewBag.Value));

@@ -4,6 +4,8 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
+
 }
 
 
@@ -50,10 +52,12 @@
                     <div class="card-header">
                         <h3 class="card-title">Lớp</h3>
                         <!-- Button trigger modal -->
-                        <a class="btn btn-success float-right" href="@Url.Action("Create","QLLop")">
-                            Thêm
-                        </a>
-
+                        @if (user != null && user.IdUT == 5)
+                        {
+                            <a class="btn btn-success float-right" href="@Url.Action("Create","QLLop")">
+                                Thêm
+                            </a>
+                        }
                     </div>
 
 
@@ -67,9 +71,13 @@
                                             <tr>
                                                 <th>@Html.DisplayNameFor(model => model.TenLop)</th>
                                                 <th>@Html.DisplayNameFor(model => model.NIENKHOA.TenNK)</th>
-                                                <th>Thêm sinh viên</th>
                                                 <th>Danh sách sinh viên</th>
-                                                <th></th>
+
+                                                @if (user != null && user.IdUT == 5)
+                                                {
+                                                    <th>Thêm sinh viên</th>
+                                                    <th></th>
+                                                }
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -82,13 +90,7 @@
                                                     <td>
                                                         @Html.DisplayFor(modelItem => item.NIENKHOA.TenNK)
                                                     </td>
-                                                    <td>
-                                                        <div class="btn-group btn-group-sm">
-                                                            <a class="btn btn-success" href="@Url.Action("NhapLop","QLLop",new { id=item.IdLop })">
-                                                                <i class="fa fa-plus"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
+
                                                     <td>
                                                         <div class="btn-group btn-group-sm">
                                                             <a class="btn btn-info" href="@Url.Action("HienThiDSLop","QLLop",new { id=item.IdLop })">
@@ -96,14 +98,23 @@
                                                             </a>
                                                         </div>
                                                     </td>
-                                                    <td>
-                                                        <div class="btn-group btn-group-sm">
-                                                            <a class="btn btn-info" href="@Url.Action("Edit","QLLop",new { id=item.IdLop })">
-                                                                <i class="fas fa-pencil-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                    
+                                                    @if (user != null && user.IdUT == 5)
+                                                    {
+                                                        <td>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a class="btn btn-success" href="@Url.Action("NhapLop","QLLop",new { id=item.IdLop })">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a class="btn btn-info" href="@Url.Action("Edit","QLLop",new { id=item.IdLop })">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    }
                                                 </tr>
                                             }
                                         </tbody>

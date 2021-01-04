@@ -162,7 +162,7 @@ namespace DOAN.Controllers
             }    
         }
 
-        [Authorize(Roles = "*,quanlysinhvien")]
+        [Authorize(Roles = "*")]
         public ActionResult Create()
         {
             ViewBag.ChuyenNganh =new SelectList(db.CHUYENNGANHs,"IdCNganh","TenCNganh");
@@ -175,6 +175,7 @@ namespace DOAN.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create")]
+        [Authorize(Roles = "*")]
         public ActionResult Create(NGUOIDUNG nd, HttpPostedFileBase Avatar)
         {
             if (Avatar != null)
@@ -212,7 +213,7 @@ namespace DOAN.Controllers
             }
         }
 
-        [Authorize(Roles = "*,quanlygiangvien")]
+        [Authorize(Roles = "*")]
         public ActionResult CreateGV()
         {
             ViewBag.ChucVu = new SelectList(db.CHUCVUs.Where(x =>x.IdCVu>1), "IdCVu", "TenCVu");
@@ -224,6 +225,7 @@ namespace DOAN.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("CreateGV")]
+        [Authorize(Roles = "*")]
         public ActionResult CreateGV(NGUOIDUNG nd, HttpPostedFileBase Avatar, FormCollection f)
         {
             if (Avatar != null)
@@ -469,7 +471,7 @@ namespace DOAN.Controllers
         
 
 
-        [Authorize(Roles = "*,quanlygiangvien")]
+        [Authorize(Roles = "*")]
         public ActionResult Delete(int id)
         {
             NGUOIDUNG nd = db.NGUOIDUNGs.Find(id);

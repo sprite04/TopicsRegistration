@@ -40,7 +40,7 @@ namespace WEB.Controllers
             }
             catch (Exception)
             {
-                ModelState.AddModelError("", "Please check your information.");
+                ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin bạn đã nhập");
                 ViewBag.NienKhoa = new SelectList(db.NIENKHOAs, "IdNK", "TenNK", lop.NIENKHOA.IdNK);
                 return View(lop);
             }

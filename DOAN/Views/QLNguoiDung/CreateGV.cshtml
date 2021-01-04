@@ -57,13 +57,13 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Name, htmlAttributes: new { @for = "inputName" })
-                                @Html.TextBoxFor(model => model.Name, new { @type = "text", @class = "form-control", @id = "inputName", @placeholder = "Name", @autofocus = "autofocus" })
+                                @Html.TextBoxFor(model => model.Name, new { @type = "text", @class = "form-control", @id = "inputName", @autofocus = "autofocus" })
                                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                             </div>
 
                             <div class="form-group">
-                                @Html.LabelFor(model => model.Username, htmlAttributes: new { @for = "inputName" })
-                                @Html.TextBoxFor(model => model.Username, new { @type = "text", @class = "form-control", @id = "inputName", @placeholder = "MSSV", @autofocus = "autofocus" })
+                                <label>Tên đăng nhập</label>
+                                @Html.TextBoxFor(model => model.Username, new { @type = "text", @class = "form-control", @id = "inputName", @autofocus = "autofocus" })
                                 @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
                             </div>
 
@@ -98,7 +98,7 @@
 
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Phone, htmlAttributes: new { @for = "inputPhone" })
-                                @Html.TextBoxFor(model => model.Phone, new { @type = "text", @class = "form-control", @id = "inputPhone", @placeholder = "Phone Number" })
+                                @Html.TextBoxFor(model => model.Phone, new { @type = "text", @class = "form-control", @id = "inputPhone" })
                                 @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
                             </div>
 
