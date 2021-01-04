@@ -12,8 +12,9 @@ namespace DOAN.Controllers
     {
         // GET: QLThongBao
         WEBDbContext db = new WEBDbContext();
-        public ActionResult Index(int? page)
+        public ActionResult Index(int? page, int error=0)
         {
+            ViewBag.Error = error;
             //So san pham tren 1 trang
             int PageSize = 1;
             //So trang hien tai
@@ -97,6 +98,26 @@ namespace DOAN.Controllers
                 ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin đã nhập");
             }    
             return View(thongbao);
+        }
+
+        public ActionResult XoaThongBao(int id)
+        {
+            int error = 0;
+            var thongbao = db.THONGBAOs.SingleOrDefault(x => x.IdTB == id);
+            if (thongbao == null)
+                return HttpNotFound();
+            db.THONGBAOs.Remove(thongbao);
+            try
+            {
+                error = -1;
+                db.SaveChanges();
+                return RedirectToAction("Index", "ThongBao", new { error = error });
+            }
+            catch (Exception)
+            {
+                error = 1;
+                return RedirectToAction("Index", "ThongBao",new { error=error});
+            }
         }
     }
 }

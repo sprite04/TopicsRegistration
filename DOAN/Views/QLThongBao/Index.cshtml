@@ -49,6 +49,39 @@
 
 }
 
+@section script{
+    <script>
+        $(".DeleteId").prepend("<i class='fas fa-times'></i>");
+    </script>
+}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (ViewBag.Error == 1)
+                {
+                    <div class="alert alert-warning ">
+                        Quá trình thực hiện không thành công
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (ViewBag.Error == -1)
+                {
+                    <div class="alert alert-success">
+                        Quá trình thực hiện thành công
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="content">
 
     <!-- Default box -->
@@ -65,7 +98,7 @@
                 @foreach (var item in Model)
                 {
                     <!-- Default box -->
-                    <div class="card collapsed-card">
+                    <div class="card collapsed-card" id="row1_@item.IdTB">
                         <div class="card-header">
                             <span class="btn btn-primary btn-sm float-left">
                                 @item.NgayDang
@@ -73,9 +106,8 @@
                             <a href="@Url.Action("ChiTietThongBao","QLThongBao",new { id=item.IdTB})"><span class="pl-3" style="font-size:18px; line-height:32px">@item.TenTB</span></a>
 
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" title="Remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                @Ajax.ActionLink(" ", "XoaThongBao", "QLThongBao", new { id = item.IdTB }, new AjaxOptions { Confirm = "Bạn có muốn xoá người dùng này?", OnComplete = "$('#row1_" + @item.IdTB + "').remove()", HttpMethod = "Post" }, new { @class = "btn btn-tool DeleteId",@tittle="Remove"})
+                                
                             </div>
                         </div>
                     </div>
@@ -90,9 +122,9 @@
                 }
             </section>
         </div>
-        
+
         <!-- /.card-footer-->
     </div>
     <!-- /.card -->
 
-</section>
+</section>                

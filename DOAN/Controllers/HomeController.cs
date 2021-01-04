@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -112,6 +115,59 @@ namespace DOAN.Controllers
             }
             ViewBag.ThongBao = 1;
             return View();
+        }
+
+        public ActionResult QuenMatKhau()
+        {
+            ViewBag.ThongBao = "";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult QuenMatKhau(FormCollection f)
+        {
+            string email = f["email"];
+            var nguoidung=db.NGUOIDUNGs.SingleOrDefault(x => x.Email.ToLower().Trim() == email.ToLower().Trim());
+            if (nguoidung == null)
+            {
+                ViewBag.ThongBao = "Email không tồn tại. Vui lòng nhập lại";
+                return View();
+            }
+            string password = Membership.GeneratePassword(6, 0);
+            password = Regex.Replace(password, @"[^a-zA-Z0-9]", m => "9");
+            Gmail gmail = new Gmail();
+            gmail.To = email.Trim();
+            gmail.From = "testgoog96@gmail.com";
+            gmail.Subject = "Cấp lại mật khẩu đăng nhập";
+            gmail.Body = "<p>Mật khẩu đăng nhập tạm thời của bạn l&agrave; <span style=\"color: #3598db;\">"+password+"</span>. Vui l&ograve;ng thay đổi lại mật khẩu khi đăng nhập th&agrave;nh c&ocirc;ng.</p>";
+
+            
+            try
+            {
+                MailMessage mail = new MailMessage(gmail.From, gmail.To);
+                mail.Subject = gmail.Subject;
+                mail.Body = gmail.Body;
+                mail.IsBodyHtml = true;
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                NetworkCredential nc = new NetworkCredential("testgoog96@gmail.com", "thuytien1234567890");
+                smtp.UseDefaultCredentials = true;
+                smtp.Credentials = nc;
+                smtp.Send(mail);
+
+                nguoidung.Password = Encryptor.MD5Hash(password);
+                db.Entry(nguoidung).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+                ViewBag.ThongBao = "Email đã được gửi, vui lòng kiểm tra hộp thư để cập nhật thông tin.";
+                return View();
+            }
+            catch (Exception)
+            {
+                ViewBag.ThongBao = "Quá trình thực hiện thất bại";
+                return View();
+            }
         }
 
         public void PhanQuyen(string username, string quyen)

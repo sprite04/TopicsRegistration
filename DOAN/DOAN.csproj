@@ -1938,6 +1938,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Common\DDLOptions.cs" />
     <Compile Include="Common\Encryptor.cs" />
+    <Compile Include="Common\Gmail.cs" />
     <Compile Include="Common\GoogleDriveFile.cs" />
     <Compile Include="Common\GoogleDriveFilesRepository.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -2187,6 +2188,7 @@
     <Content Include="Views\QLThongBao\TaoThongBao.cshtml" />
     <Content Include="Views\QLThongBao\ChiTietThongBao.cshtml" />
     <Content Include="Views\QLThongBao\ChinhSuaThongBao.cshtml" />
+    <Content Include="Views\Home\QuenMatKhau.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
