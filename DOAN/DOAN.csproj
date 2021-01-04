@@ -1967,6 +1967,7 @@
     <Compile Include="Models\Client\TrangThaiClient.cs" />
     <Compile Include="Models\Client\UserTypeClient.cs" />
     <Compile Include="Models\Client\UserType_QuyenClient.cs" />
+    <Compile Include="Models\Client\v_ThongBaoClient.cs" />
     <Compile Include="Models\Client\XinVaoNhomClient.cs" />
     <Compile Include="Models\DETAI.cs" />
     <Compile Include="Models\LOAIDETAI.cs" />
@@ -1979,6 +1980,7 @@
     <Compile Include="Models\TRANGTHAI.cs" />
     <Compile Include="Models\USERTYPE.cs" />
     <Compile Include="Models\USERTYPE_QUYEN.cs" />
+    <Compile Include="Models\v_ThongBao.cs" />
     <Compile Include="Models\WEBDbContext.cs" />
     <Compile Include="Models\XINVAONHOM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

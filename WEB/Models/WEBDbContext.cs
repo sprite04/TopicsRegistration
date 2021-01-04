@@ -27,6 +27,7 @@ namespace WEB.Models
         public virtual DbSet<USERTYPE> USERTYPEs { get; set; }
         public virtual DbSet<USERTYPE_QUYEN> USERTYPE_QUYEN { get; set; }
         public virtual DbSet<XINVAONHOM> XINVAONHOMs { get; set; }
+        public virtual DbSet<v_ThongBao> v_ThongBao { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

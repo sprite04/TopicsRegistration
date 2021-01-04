@@ -2084,6 +2084,7 @@
     <Compile Include="Controllers\TRANGTHAIsController.cs" />
     <Compile Include="Controllers\USERTYPEsController.cs" />
     <Compile Include="Controllers\USERTYPE_QUYENController.cs" />
+    <Compile Include="Controllers\v_ThongBaoController.cs" />
     <Compile Include="Controllers\XINVAONHOMsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -2102,6 +2103,7 @@
     <Compile Include="Models\TRANGTHAI.cs" />
     <Compile Include="Models\USERTYPE.cs" />
     <Compile Include="Models\USERTYPE_QUYEN.cs" />
+    <Compile Include="Models\v_ThongBao.cs" />
     <Compile Include="Models\WEBDbContext.cs" />
     <Compile Include="Models\XINVAONHOM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

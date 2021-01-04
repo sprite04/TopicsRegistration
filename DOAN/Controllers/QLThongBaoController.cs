@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DOAN.Models;
+using DOAN.Models.Client;
 using PagedList;
 
 namespace DOAN.Controllers
@@ -20,7 +21,8 @@ namespace DOAN.Controllers
             int PageSize = 1;
             //So trang hien tai
             int PageNumber = (page ?? 1);
-            var list = db.THONGBAOs.Where(x => x.IsDelete == false);
+            v_ThongBaoClient tbClient = new v_ThongBaoClient();
+            var list = tbClient.findAll();
             return View(list.OrderByDescending(x => x.NgayDang).ToPagedList(PageNumber, PageSize));
         }
 
