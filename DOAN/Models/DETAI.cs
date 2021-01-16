@@ -83,7 +83,7 @@
 
         public bool? IsDuyet { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "{0} không được để trống")]
         [DisplayName("Số lượng sinh viên")]
         public int? SoLuongSV { get; set; }
 

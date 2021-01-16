@@ -157,14 +157,13 @@
                                                 @Html.DisplayFor(model => model.CAUHINH1.NIENKHOA1.NamBD)
                                             </td>
                                         </tr>
+                                        
                                         <tr>
                                             <th>
                                                 @Html.DisplayNameFor(model => model.TruongNhom)
                                             </th>
                                             <td>
-                                                <a href="@Url.Action("ChiTietNguoiDung","QLNguoiDung",new { id=Model.NGUOIDUNG1.IdUT})">
-                                                    @Html.DisplayFor(model => model.NGUOIDUNG1.Name)
-                                                </a>
+                                                @Html.DisplayFor(model => model.NGUOIDUNG1.Name)
                                             </td>
                                         </tr>
                                         @if (Model.TruongNhom != null)

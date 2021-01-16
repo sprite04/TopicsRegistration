@@ -19,7 +19,7 @@ namespace DOAN.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DeTai { get; set; }
 
-        public DateTime? ThoiGian { get; set; }
+        public DateTime ThoiGian { get; set; }
 
         public virtual DETAI DETAI1 { get; set; }
 

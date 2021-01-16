@@ -1,4 +1,4 @@
-namespace DOAN.Models
+﻿namespace DOAN.Models
 {
     using System;
     using System.Collections.Generic;
@@ -21,11 +21,13 @@ namespace DOAN.Models
         public int IdNK { get; set; }
 
         [StringLength(50)]
-        [DisplayName("Ni�n kho�")]
+        [DisplayName("Niên khoá")]
         public string TenNK { get; set; }
 
+        [DisplayName("Năm bắt đầu")]
         public int? NamBD { get; set; }
 
+        [DisplayName("Năm kết thúc")]
         public int? NamKT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -1,7 +1,8 @@
-﻿
+﻿@using DOAN.Models;
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/HomeLayout.cshtml";
+    var user = Session["TaiKhoan"] as NGUOIDUNG;
 }
 
 
@@ -54,7 +55,7 @@
                     <div class="icon">
                         <i class="ion ion-stats-bars"></i>
                     </div>
-                    <a href="#" class="small-box-footer">Xem<i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="@Url.Action("IndexGV","QLNguoiDung")" class="small-box-footer">Xem<i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -69,7 +70,7 @@
                     <div class="icon">
                         <i class="ion ion-person-add"></i>
                     </div>
-                    <a href="#" class="small-box-footer">Xem <i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="@Url.Action("Index","QLNguoiDung")" class="small-box-footer">Xem <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -79,12 +80,19 @@
                     <div class="inner">
                         <h3>@ViewBag.DeTai</h3>
 
-                        <p>Đề tài</p>
+                        <p>Đề tài của tôi</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-pie-graph"></i>
                     </div>
-                    <a href="#" class="small-box-footer">Xem <i class="fas fa-arrow-circle-right"></i></a>
+                    @if (user != null && user.IdUT == 1)
+                    {
+                        <a href="@Url.Action("NhomDeTai","QLDeTai")" class="small-box-footer">Xem <i class="fas fa-arrow-circle-right"></i></a>
+                    }
+                    else if (user != null && user.IdUT > 1)
+                    {
+                        <a href="@Url.Action("DanhSachDeTaiCuaTungGV","QLDeTai",new { id=user.IdUser})" class="small-box-footer">Xem <i class="fas fa-arrow-circle-right"></i></a>
+                    }
                 </div>
             </div>
             <!-- ./col -->
@@ -92,7 +100,7 @@
         <!-- /.row -->
         <div class="container-fluid m-0 p-0">
             <div class="row">
-                <div class="col-6">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header ui-sortable-handle" style="cursor: move;">
                             <h3 class="card-title">

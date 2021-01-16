@@ -9,6 +9,7 @@ using DOAN.Models;
 
 namespace DOAN.Controllers
 {
+    [Authorize(Roles = "*")]
     public class QLCauHinhController : Controller
     {
         WEBDbContext db = new WEBDbContext();
@@ -46,8 +47,8 @@ namespace DOAN.Controllers
             cauhinh.DateUpdate = DateTime.Now;
             cauhinh.NguoiTao = user.IdUser;
             cauhinh.Active = true;
-            string FolderName = cauhinh.LOAIDETAI.TenLoai + " | " + cauhinh.NIENKHOA1.TenNK + " (" + cauhinh.NIENKHOA1.NamBD + "-" + cauhinh.NIENKHOA1.NamKT + ") " + " | Học kỳ " + cauhinh.HocKy + " (" + cauhinh.NamHocBatDauHocKy + "-" + cauhinh.NamHocKetThucHocKy + ")";
-            cauhinh.folderDriveID= GoogleDriveFilesRepository.CreateFolder(FolderName);
+            //string FolderName = cauhinh.LOAIDETAI.TenLoai + " | " + cauhinh.NIENKHOA1.TenNK + " (" + cauhinh.NIENKHOA1.NamBD + "-" + cauhinh.NIENKHOA1.NamKT + ") " + " | Học kỳ " + cauhinh.HocKy + " (" + cauhinh.NamHocBatDauHocKy + "-" + cauhinh.NamHocKetThucHocKy + ")";
+            //cauhinh.folderDriveID= GoogleDriveFilesRepository.CreateFolder(FolderName);
 
             if (ModelState.IsValid)
             {

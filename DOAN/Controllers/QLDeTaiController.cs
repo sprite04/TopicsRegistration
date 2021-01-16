@@ -731,6 +731,7 @@ namespace DOAN.Controllers
             }
         }
 
+        //Hiển thị các thành viên trong từng đề tài
         [Authorize(Roles = "quanlinhom")]
         public ActionResult NhomDeTai()
         {
@@ -770,11 +771,38 @@ namespace DOAN.Controllers
                     }
                     else
                     {
-                        detai.TruongNhom = null;
-                        db.Entry(detai).State = EntityState.Modified;
-                        db.SaveChanges();
-                        db.SINHVIEN_DETAI.Remove(sv_dt);
-                        db.SaveChanges();
+                        var dsxinvn = db.XINVAONHOMs.Where(x => x.DeTai == detai.IdDeTai);
+                        if(dsxinvn.Count()>0)
+                        {
+                            var date = dsxinvn.Min(x => x.ThoiGian);
+                            XINVAONHOM loixvn = dsxinvn.SingleOrDefault(x => DateTime.Compare(x.ThoiGian, date) == 0);
+                            if(loixvn!=null)
+                            {
+                                detai.TruongNhom = loixvn.NguoiGui;
+                                db.Entry(detai).State = EntityState.Modified;
+                                db.SaveChanges();
+                                var ds_xvn = db.XINVAONHOMs.Where(x => x.NguoiGui == loixvn.NguoiGui);
+                                db.XINVAONHOMs.RemoveRange(ds_xvn);
+                                db.SaveChanges();
+                                SINHVIEN_DETAI sinhvien_detai = new SINHVIEN_DETAI();
+                                sinhvien_detai.DeTai = detai.IdDeTai;
+
+                                sinhvien_detai.SinhVien = loixvn.NguoiGui;
+                                db.SINHVIEN_DETAI.Add(sinhvien_detai);
+                                db.SaveChanges();
+                                db.SINHVIEN_DETAI.Remove(sv_dt);
+                                db.SaveChanges();
+                            }    
+                        }
+                        else
+                        {
+                            detai.TruongNhom = null;
+                            db.Entry(detai).State = EntityState.Modified;
+                            db.SaveChanges();
+                            db.SINHVIEN_DETAI.Remove(sv_dt);
+                            db.SaveChanges();
+                        }    
+                        
                     }    
                 }    
                 return RedirectToAction("NhomDeTai");
@@ -785,6 +813,8 @@ namespace DOAN.Controllers
             }
         }
 
+
+        //Nộp bài cho từng đề tài
         [Authorize(Roles = "quanlinhom")]
         public ActionResult DeTaiSinhVien(int error=0)
         {

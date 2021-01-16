@@ -29,7 +29,6 @@ namespace WEB.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Create")]
         public ActionResult Create(LOP lop)
         {
             try
@@ -143,6 +142,7 @@ namespace WEB.Controllers
 
         }
 
+        //Hiển thị danh sách sinh viên trong từng lớp
         public ActionResult HienThiDSLop(int id)
         {
             LOP lop = db.LOPs.Find(id);

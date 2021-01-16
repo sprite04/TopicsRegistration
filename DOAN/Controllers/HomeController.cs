@@ -36,7 +36,12 @@ namespace DOAN.Controllers
                 ViewBag.ThongBao = db.THONGBAOs.Where(x => x.IsDelete == false).Count();
                 ViewBag.GiaoVien = db.NGUOIDUNGs.Where(x => x.ChucVu > 1 && x.Block == false).Count();
                 ViewBag.SinhVien = db.NGUOIDUNGs.Where(x => x.ChucVu == 1 && x.Block == false).Count();
-                ViewBag.DeTai = db.DETAIs.Where(x => x.IsDelete == false && x.IsDuyet == true).Count();
+                if (user.IdUT == 1)
+                    ViewBag.DeTai = db.SINHVIEN_DETAI.Where(x => x.SinhVien == user.IdUser && x.DETAI1.IsDuyet == true && x.DETAI1.IsDelete == false).Count();
+                else if (user.IdUT > 1)
+                    ViewBag.DeTai = db.DETAIs.Where(x => x.GVHuongDan == user.IdUser && x.IsDelete == false).Count();
+                else
+                    ViewBag.DeTai = 0;
                 ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh");
                 return View();
             }   
@@ -47,42 +52,55 @@ namespace DOAN.Controllers
         [HttpPost]
         public ActionResult Index(FormCollection f)
         {
-            var kq = f["ddlCauHinh"];
-            List<CauHinh> list = new List<CauHinh>();
-            foreach (var item in db.CAUHINHs.Where(x => x.Active == true))
+            NGUOIDUNG user = Session["TaiKhoan"] as NGUOIDUNG;
+            if(user!=null)
             {
-                CauHinh ch = new CauHinh();
-                ch.IdCauHinh = item.IdCauHinh;
-                ch.TenCauHinh = item.LOAIDETAI.TenLoai + " " + item.NIENKHOA1.NamBD;
-                list.Add(ch);
-            }
-            if (kq != "")
-            {
-                int giatri = int.Parse(kq);
-                ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh", giatri);
-                List<int> values = new List<int>();
-                List<string> labels = new List<string>();
-                foreach (var y in db.CHUYENNGANHs)
+                var kq = f["ddlCauHinh"];
+                List<CauHinh> list = new List<CauHinh>();
+                foreach (var item in db.CAUHINHs.Where(x => x.Active == true))
                 {
-                    int k = db.DETAIs.Count(m => m.ChuyenNganh == y.IdCNganh && m.CauHinh == giatri);
-                    values.Add(k);
-                    labels.Add(y.TenCNganh);
+                    CauHinh ch = new CauHinh();
+                    ch.IdCauHinh = item.IdCauHinh;
+                    ch.TenCauHinh = item.LOAIDETAI.TenLoai + " " + item.NIENKHOA1.NamBD;
+                    list.Add(ch);
                 }
+                ViewBag.ThongBao = db.THONGBAOs.Where(x => x.IsDelete == false).Count();
+                ViewBag.GiaoVien = db.NGUOIDUNGs.Where(x => x.ChucVu > 1 && x.Block == false).Count();
+                ViewBag.SinhVien = db.NGUOIDUNGs.Where(x => x.ChucVu == 1 && x.Block == false).Count();
+                if (user.IdUT == 1)
+                    ViewBag.DeTai = db.SINHVIEN_DETAI.Where(x => x.SinhVien == user.IdUser && x.DETAI1.IsDuyet == true && x.DETAI1.IsDelete == false).Count();
+                else if (user.IdUT > 1)
+                    ViewBag.DeTai = db.DETAIs.Where(x => x.GVHuongDan == user.IdUser && x.IsDelete == false).Count();
+                else
+                    ViewBag.DeTai = 0;
+                if (kq != "")
+                {
+                    int giatri = int.Parse(kq);
+                    ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh", giatri);
+                    List<int> values = new List<int>();
+                    List<string> labels = new List<string>();
+                    foreach (var y in db.CHUYENNGANHs)
+                    {
+                        int k = db.DETAIs.Count(m => m.ChuyenNganh == y.IdCNganh && m.CauHinh == giatri && m.IsDelete == false && m.IsDuyet == true);
+                        values.Add(k);
+                        labels.Add(y.TenCNganh);
+                    }
 
-                ViewBag.Label = labels;
-                ViewBag.Value = values;
-                ViewBag.GiaTri = giatri;
+                    ViewBag.Label = labels;
+                    ViewBag.Value = values;
+                    ViewBag.GiaTri = giatri;
+                }
+                else
+                {
+                    ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh");
+                    ViewBag.Label = "";
+                    ViewBag.Value = "";
+                    ViewBag.GiaTri = 0;
+                }
+                return View();
             }
             else
-            {
-                ViewBag.items = new SelectList(list, "IdCauHinh", "TenCauHinh");
-                ViewBag.Label = "";
-                ViewBag.Value = "";
-                ViewBag.GiaTri = 0;
-            }
-
-            
-            return View();
+                return RedirectToAction("DangNhap");
         }
 
         [HttpGet]

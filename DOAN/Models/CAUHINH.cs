@@ -20,6 +20,7 @@
         public int IdCauHinh { get; set; }
 
         [DisplayName("Số lượng sinh viên tối đa")]
+        [Required]
         public int? SoLuongSVToiDa { get; set; }
 
         public bool? Active { get; set; }
